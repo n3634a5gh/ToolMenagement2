@@ -1,0 +1,95 @@
+﻿@model Tool_Menagement.Models.NarzedzieViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Narzedzie</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="Opis" class="control-label"></label>
+                <select asp-for="Opis" class="form-control" id="Opis">
+                    @foreach (var item in ViewBag.Opisy as List<string>)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Przeznaczenie" class="control-label"></label>
+                <select asp-for="Przeznaczenie" class="form-control" id="Przeznaczenie">
+                    <option value="">-- Wybierz --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaterialWykonania" class="control-label"></label>
+                <select asp-for="MaterialWykonania" class="form-control" id="MaterialWykonania">
+                    <option value="">-- Wybierz --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Srednica" class="control-label"></label>
+                <input asp-for="Srednica" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Trwalosc" class="control-label"></label>
+                <input asp-for="Trwalosc" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#Opis').change(function () {
+                var selectedOpis = $(this).val();
+                if (selectedOpis) {
+                    $.ajax({
+                        url: '@Url.Action("GetPrzeznaczenia", "Narzedzia")',
+                        type: 'GET',
+                        data: { opis: selectedOpis },
+                        success: function (data) {
+                            $('#Przeznaczenie').empty();
+                            $('#Przeznaczenie').append('<option value="">-- Wybierz --</option>');
+                            $.each(data, function (index, value) {
+                                $('#Przeznaczenie').append('<option value="' + value + '">' + value + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#Przeznaczenie').change(function () {
+                var selectedOpis = $('#Opis').val();
+                var selectedPrzeznaczenie = $(this).val();
+                if (selectedPrzeznaczenie) {
+                    $.ajax({
+                        url: '@Url.Action("GetMaterialyWykonania", "Narzedzia")',
+                        type: 'GET',
+                        data: { opis: selectedOpis, przeznaczenie: selectedPrzeznaczenie },
+                        success: function (data) {
+                            $('#MaterialWykonania').empty();
+                            $('#MaterialWykonania').append('<option value="">-- Wybierz --</option>');
+                            $.each(data, function (index, value) {
+                                $('#MaterialWykonania').append('<option value="' + value + '">' + value + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

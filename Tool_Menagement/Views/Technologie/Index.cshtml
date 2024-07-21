@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Tool_Menagement.Models.Technologium>
+
+@{
+    ViewData["Title"] = "ShowTechnology";
+}
+
+<h1>Technologie</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Opis Technologii</th>
+            <th>Data Utworzenia</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var technologia in Model)
+        {
+            <tr>
+                <td colspan="2">
+                    <strong>@technologia.Opis</strong>
+                    <div>@technologia.DataUtworzenia?.ToString("yyyy-MM-dd")</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nazwa Narzędzia</th>
+                                <th>Czas Pracy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var narzedzieTechnologia in technologia.NarzedziaTechnologia)
+                            {
+                                <tr>
+                                    <td>@narzedzieTechnologia.IdNarzedziaNavigation.Nazwa</td>
+                                    <td>@narzedzieTechnologia.CzasPracy</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

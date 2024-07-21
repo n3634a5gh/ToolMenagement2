@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Tool_Menagement.Models.Kategorium>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<head>
+    <style>
+        .mud-autocomplete-input, .mud-list {
+            background-color: white;
+        }
+
+        .mud-popover {
+            z-index: 1500 !important;
+        }
+
+        .header-gradient {
+            background: linear-gradient(180deg, rgba(36, 122, 218, 0.79) 0%, rgba(30, 188, 84, 0.79) 100%);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<h1>Categories</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Opis)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Przeznaczenie)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaterialWykonania)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Opis)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Przeznaczenie)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MaterialWykonania)
+                </td>
+                <!-- <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdKategorii">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.IdKategorii">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdKategorii">Delete</a>
+                </td>-->
+            </tr>
+        }
+    </tbody>
+</table>

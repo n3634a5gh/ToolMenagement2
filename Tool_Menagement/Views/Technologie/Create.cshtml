@@ -1,0 +1,206 @@
+﻿@model Tool_Menagement.Models.TechnologiumViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Technologia</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="OpisTechnologii" class="control-label"></label>
+                <input asp-for="OpisTechnologii" class="form-control" id="OpisTechnologii" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Opis" class="control-label"></label>
+                <select asp-for="Opis" class="form-control" id="Opis">
+                    <option value="">-- Wybierz Opis --</option>
+                    @if (Model.Opisy != null)
+                    {
+                        @foreach (var item in Model.Opisy)
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Przeznaczenie" class="control-label"></label>
+                <select asp-for="Przeznaczenie" class="form-control" id="Przeznaczenie">
+                    <option value="">-- Wybierz --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaterialWykonania" class="control-label"></label>
+                <select asp-for="MaterialWykonania" class="form-control" id="MaterialWykonania">
+                    <option value="">-- Wybierz --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Srednica" class="control-label"></label>
+                <select asp-for="Srednica" class="form-control" id="Srednica">
+                    <option value="">-- Wybierz --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CzasPracy" class="control-label"></label>
+                <input asp-for="CzasPracy" class="form-control" id="CzasPracy" />
+            </div>
+            <div class="form-group">
+                <button type="button" id="DodajNarzedzie" class="btn btn-secondary">Dodaj Narzędzie</button>
+            </div>
+            <div class="form-group">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nazwa Narzędzia</th>
+                            <th>Czas Pracy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ListaNarzedzi">
+                        @foreach (var item in Model.NarzedziaTechnologia)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="NarzedziaTechnologia[@Model.NarzedziaTechnologia.IndexOf(item)].IdNarzedzia" value="@item.IdNarzedzia" />
+                                    <input type="hidden" name="NarzedziaTechnologia[@Model.NarzedziaTechnologia.IndexOf(item)].Nazwa" value="@item.Nazwa" />
+                                    @item.Nazwa
+                                </td>
+                                <td>
+                                    <input type="hidden" name="NarzedziaTechnologia[@Model.NarzedziaTechnologia.IndexOf(item)].CzasPracy" value="@item.CzasPracy" />
+                                    @item.CzasPracy
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Zapisz Technologię" class="btn btn-primary" id="ZapiszTechnologie" disabled />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#Opis').change(function () {
+                var selectedOpis = $(this).val();
+                if (selectedOpis) {
+                    $.ajax({
+                        url: '@Url.Action("GetPrzeznaczenia", "Technologie")',
+                        type: 'GET',
+                        data: { opis: selectedOpis },
+                        success: function (data) {
+                            $('#Przeznaczenie').empty();
+                            $('#Przeznaczenie').append('<option value="">-- Wybierz --</option>');
+                            $.each(data, function (index, value) {
+                                $('#Przeznaczenie').append('<option value="' + value + '">' + value + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#Przeznaczenie').change(function () {
+                var selectedOpis = $('#Opis').val();
+                var selectedPrzeznaczenie = $(this).val();
+                if (selectedPrzeznaczenie) {
+                    $.ajax({
+                        url: '@Url.Action("GetMaterialyWykonania", "Technologie")',
+                        type: 'GET',
+                        data: { opis: selectedOpis, przeznaczenie: selectedPrzeznaczenie },
+                        success: function (data) {
+                            $('#MaterialWykonania').empty();
+                            $('#MaterialWykonania').append('<option value="">-- Wybierz --</option>');
+                            $.each(data, function (index, value) {
+                                $('#MaterialWykonania').append('<option value="' + value + '">' + value + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#MaterialWykonania').change(function () {
+                var selectedOpis = $('#Opis').val();
+                var selectedPrzeznaczenie = $('#Przeznaczenie').val();
+                var selectedMaterialWykonania = $(this).val();
+                if (selectedMaterialWykonania) {
+                    $.ajax({
+                        url: '@Url.Action("GetSrednice", "Technologie")',
+                        type: 'GET',
+                        data: { opis: selectedOpis, przeznaczenie: selectedPrzeznaczenie, materialWykonania: selectedMaterialWykonania },
+                        success: function (data) {
+                            $('#Srednica').empty();
+                            $('#Srednica').append('<option value="">-- Wybierz --</option>');
+                            $.each(data, function (index, value) {
+                                $('#Srednica').append('<option value="' + value + '">' + value + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#DodajNarzedzie').click(function () {
+                var selectedOpis = $('#Opis').val();
+                var selectedPrzeznaczenie = $('#Przeznaczenie').val();
+                var selectedMaterialWykonania = $('#MaterialWykonania').val();
+                var selectedSrednica = $('#Srednica').val();
+                var czasPracy = $('#CzasPracy').val();
+
+                if (selectedOpis && selectedPrzeznaczenie && selectedMaterialWykonania && selectedSrednica && czasPracy) {
+                    $.ajax({
+                        url: '@Url.Action("GetIdNarzedzia", "Technologie")',
+                        type: 'GET',
+                        data: {
+                            opis: selectedOpis,
+                            przeznaczenie: selectedPrzeznaczenie,
+                            materialWykonania: selectedMaterialWykonania,
+                            srednica: selectedSrednica
+                        },
+                        success: function (data) {
+                            if (data.idNarzedzia) {
+                                var istnieje = false;
+                                $('#ListaNarzedzi tr').each(function () {
+                                    var idNarzedzia = $(this).find('input[name*="IdNarzedzia"]').val();
+                                    if (idNarzedzia == data.idNarzedzia) {
+                                        var currentCzasPracy = $(this).find('input[name*="CzasPracy"]').val();
+                                        var nowyCzasPracy = parseInt(currentCzasPracy) + parseInt(czasPracy);
+                                        $(this).find('input[name*="CzasPracy"]').val(nowyCzasPracy);
+                                        $(this).find('td').eq(1).text(nowyCzasPracy);
+                                        istnieje = true;
+                                    }
+                                });
+                                if (!istnieje) {
+                                    $('#ListaNarzedzi').append('<tr><td><input type="hidden" name="NarzedziaTechnologia[' + ($('#ListaNarzedzi tr').length) + '].IdNarzedzia" value="' + data.idNarzedzia + '" /><input type="hidden" name="NarzedziaTechnologia[' + ($('#ListaNarzedzi tr').length) + '].Nazwa" value="' + data.nazwa + '" />' + data.nazwa + '</td><td><input type="hidden" name="NarzedziaTechnologia[' + ($('#ListaNarzedzi tr').length) + '].CzasPracy" value="' + czasPracy + '" />' + czasPracy + '</td></tr>');
+                                }
+                                $('#Opis').val('');
+                                $('#Przeznaczenie').empty().append('<option value="">-- Wybierz--</option>');
+                                $('#MaterialWykonania').empty().append('<option value="">-- Wybierz --</option>');
+                                $('#Srednica').empty().append('<option value="">-- Wybierz--</option>');
+                                $('#CzasPracy').val('');
+                            } else {
+                                alert("Brak takiego narzędzia.");
+                            }
+                        }
+                    });
+                }
+            });
+
+            $('#OpisTechnologii').keyup(function () {
+                var opisTechnologii = $(this).val();
+                if (opisTechnologii) {
+                    $('#ZapiszTechnologie').prop('disabled', false);
+                } else {
+                    $('#ZapiszTechnologie').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+}
