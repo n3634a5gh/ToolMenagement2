@@ -20,5 +20,22 @@ namespace Tool_Menagement.Repositories
                     .ThenInclude(nt => nt.IdNarzedziaNavigation)
                 .ToListAsync();
         }
+
+        public async Task<Zlecenie> GetAktywneZlecenieByTechnologiaIdAsync(int technologiaId)
+        {
+            return await _context.Zlecenies
+                .FirstOrDefaultAsync(z => z.IdTechnologi == technologiaId && z.Aktywne);
+        }
+
+        public async Task<Zlecenie> GetZlecenieByIdAsync(int zlecenieId)
+        {
+            return await _context.Zlecenies.FindAsync(zlecenieId);
+        }
+
+        public async Task UpdateZlecenieAsync(Zlecenie zlecenie)
+        {
+            _context.Zlecenies.Update(zlecenie);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿    using Microsoft.AspNetCore.Mvc;
 using Tool_Menagement.Helpers;
 using Tool_Menagement.Interfaces;
 using Tool_Menagement.Models;
@@ -14,8 +14,10 @@ namespace Tool_Menagement.Controllers
         public CategoryController(ICategoryRepository kategoriaRepository, ToolsBaseContext context)
         {
             _context = context;
-            Return_Categories return_Categories = new Return_Categories();
+            //Return_Categories return_Categories = new Return_Categories();
             //return_Categories.fillTable(_context);
+            ConfigTools configTools = new ConfigTools();
+            //configTools.fillTable(_context);
             _kategoriaRepository = kategoriaRepository;
         }
 

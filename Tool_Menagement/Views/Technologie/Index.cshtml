@@ -1,29 +1,54 @@
-﻿@model IEnumerable<Tool_Menagement.Models.Technologium>
+﻿@model IEnumerable<Tool_Menagement.Models.TechnologiaViewModel>
 
 @{
     ViewData["Title"] = "ShowTechnology";
+    Layout = "_Layout"; // Zakładając, że masz Layout
 }
 
 <h1>Technologie</h1>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Opis Technologii</th>
             <th>Data Utworzenia</th>
+            <th>Aktywne Zlecenie</th>
+            <th>Akcja</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var technologia in Model)
+        @foreach (var technologiaViewModel in Model)
         {
             <tr>
-                <td colspan="2">
-                    <strong>@technologia.Opis</strong>
-                    <div>@technologia.DataUtworzenia?.ToString("yyyy-MM-dd")</div>
+                <td>
+                    <a href="javascript:void(0)" class="toggle-details" data-id="@technologiaViewModel.Technologia.IdTechnologi">
+                        <strong>@technologiaViewModel.Technologia.Opis</strong>
+                    </a>
+                </td>
+                <td>@technologiaViewModel.Technologia.DataUtworzenia?.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (technologiaViewModel.AktywneZlecenie != null)
+                    {
+                        @technologiaViewModel.AktywneZlecenie.IdZlecenia
+                    }
+                </td>
+                <td>
+                    <form asp-action="CreateZlecenie" method="post" style="display:inline;">
+                        <input type="hidden" name="technologiaId" value="@technologiaViewModel.Technologia.IdTechnologi" />
+                        <button type="submit" class="btn btn-primary" @(technologiaViewModel.AktywneZlecenie != null ? "disabled" : "")>
+                            Nowe zlecenie
+                        </button>
+                    </form>
+                    <form asp-action="ClseZleocenie" method="post" style="display:inline;" class="end-zlecenie-form">
+                        <input type="hidden" name="zlecenieId" value="@technologiaViewModel.AktywneZlecenie?.IdZlecenia" />
+                        <button type="submit" class="btn btn-danger" @(technologiaViewModel.AktywneZlecenie == null ? "disabled" : "")>
+                            Zakończ
+                        </button>
+                    </form>
                 </td>
             </tr>
-            <tr>
-                <td colspan="2">
+            <tr class="details" data-id="@technologiaViewModel.Technologia.IdTechnologi" style="display: none;">
+                <td colspan="4">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -32,7 +57,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var narzedzieTechnologia in technologia.NarzedziaTechnologia)
+                            @foreach (var narzedzieTechnologia in technologiaViewModel.Technologia.NarzedziaTechnologia)
                             {
                                 <tr>
                                     <td>@narzedzieTechnologia.IdNarzedziaNavigation.Nazwa</td>
@@ -46,3 +71,53 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.toggle-details').click(function () {
+                var id = $(this).data('id');
+                $('.details').not('[data-id="' + id + '"]').hide();
+                $('.details[data-id="' + id + '"]').toggle();
+            });
+
+            $('.end-zlecenie-form').submit(function (event) {
+                event.preventDefault();
+                var form = this;
+
+                if (confirm("Czy na pewno chcesz zakończyć to zlecenie?")) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+        background-color: #e9e9e9;
+    }
+
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #ddd !important;
+    }
+
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
+
+    .table .toggle-details {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .table .toggle-details:hover {
+            text-decoration: underline;
+        }
+</style>

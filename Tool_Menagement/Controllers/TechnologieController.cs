@@ -123,7 +123,46 @@ public class TechnologieController : Controller
     public async Task<IActionResult> Index()
     {
         var technologie = await _technologieRepository.GetAllTechnologieAsync();
-        return View(technologie);
+        var technologieViewModel = new List<TechnologiaViewModel>();
+        foreach (var technologia in technologie)
+        {
+            var aktywneZlecenie = await _technologieRepository.GetAktywneZlecenieByTechnologiaIdAsync(technologia.IdTechnologi);
+            technologieViewModel.Add(new TechnologiaViewModel
+            {
+                Technologia = technologia,
+                AktywneZlecenie = aktywneZlecenie
+            });
+        }
+
+        return View(technologieViewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateZlecenie(int technologiaId)
+    {
+        var noweZlecenie = new Zlecenie
+        {
+            IdTechnologi = technologiaId,
+            Aktywne = true
+        };
+
+        _context.Zlecenies.Add(noweZlecenie);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ClseZleocenie(int zlecenieId)
+    {
+        var zlecenie = await _technologieRepository.GetZlecenieByIdAsync(zlecenieId);
+        if (zlecenie != null)
+        {
+            zlecenie.Aktywne = false;
+            await _technologieRepository.UpdateZlecenieAsync(zlecenie);
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 
 }
