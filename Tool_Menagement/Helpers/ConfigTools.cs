@@ -13,10 +13,10 @@ namespace Tool_Menagement.Helpers
         public void fillTable(ToolsBaseContext _context)
         {
             var CatId=_context.Kategoria
-                .Where(m=>m.Opis== "Wiertło")
-                .Where(n=>n.MaterialWykonania=="VHM" || n.MaterialWykonania=="DIA" || 
-                n.MaterialWykonania == "PM")
-                .Where(k=>k.Przeznaczenie=="Stal" || k.Przeznaczenie== "Nieżelazne")
+                .Where(m=>m.Opis== "Frez walcowy z łbem kulistym")
+                /*.Where(n=>n.MaterialWykonania== "PM" || n.MaterialWykonania== "DIA" || 
+                n.MaterialWykonania == "VHM")
+                .Where(k=>k.Przeznaczenie== "Nieżelazne" || k.Przeznaczenie== "Stal")*/
                 .Select(n=>n.IdKategorii)
                 .ToArray();
             string opis = "",material="", przeznacz="";
@@ -26,7 +26,7 @@ namespace Tool_Menagement.Helpers
 
             for (int i=0;i<CatId.Length;i++)
             {
-                for(int j=1;j<=15;j+=2)
+                for(int j=5;j<=25;j+=5)
                 {
                     opis = _context.Kategoria
                         .Where(n => n.IdKategorii == CatId[i])
@@ -57,7 +57,7 @@ namespace Tool_Menagement.Helpers
                     var magazyn = new Magazyn
                     {
                         IdNarzedzia = idNarzedzia,
-                        Trwalosc = 4000,
+                        Trwalosc = 2000,
                         Uzycie = 0,
                         CyklRegeneracji = 0,
                         Wycofany = false,

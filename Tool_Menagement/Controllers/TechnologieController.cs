@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Tool_Menagement.Helpers;
 using Tool_Menagement.Interfaces;
 using Tool_Menagement.Models;
 
@@ -140,16 +141,27 @@ public class TechnologieController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateZlecenie(int technologiaId)
     {
-        var noweZlecenie = new Zlecenie
+        var availableTools = new Zlecenie_Available_Tools();
+        bool canCreate = availableTools.Can_create(_context, technologiaId);
+
+        if (canCreate)
         {
-            IdTechnologi = technologiaId,
-            Aktywne = true
-        };
+            var noweZlecenie = new Zlecenie
+            {
+                IdTechnologi = technologiaId,
+                Aktywne = true
+            };
 
-        _context.Zlecenies.Add(noweZlecenie);
-        await _context.SaveChangesAsync();
+            _context.Zlecenies.Add(noweZlecenie);
+            await _context.SaveChangesAsync();
 
-        return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Nie można utworzyć zlecenia. Brak dostępnych narzędzi.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]

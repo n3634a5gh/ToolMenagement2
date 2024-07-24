@@ -28,6 +28,7 @@ public partial class ToolsBaseContext : DbContext
     public virtual DbSet<Technologium> Technologia { get; set; }
 
     public virtual DbSet<Zlecenie> Zlecenies { get; set; }
+    public virtual DbSet<Zlecenie_TT> Zlecenie_TT { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionStrings:MyDatabase");
@@ -138,6 +139,22 @@ public partial class ToolsBaseContext : DbContext
                 .HasForeignKey(d => d.IdTechnologi)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rST_ZlecenieTechnologia");
+        });
+        modelBuilder.Entity<Zlecenie_TT>(entity =>
+        {
+            entity.HasKey(e => e.IdPozycji).HasName("PK_OrderTT");
+
+            entity.ToTable("OrderTT");
+
+            entity.Property(e => e.IdPozycji).HasColumnName("Position_Id");
+            entity.Property(e => e.IdZlecenia).HasColumnName("Order_Id");
+            entity.Property(e => e.IdNarzedzia).HasColumnName("Tool_Id");
+            entity.Property(e => e.Aktywne).HasColumnName("Active");
+
+            entity.HasOne(d => d.IdZlecenieNavigation).WithMany(p => p.ZlecenieTT)
+                .HasForeignKey(d => d.IdZlecenia)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rST_OrderTT_Zlecenie");
         });
 
         OnModelCreatingPartial(modelBuilder);

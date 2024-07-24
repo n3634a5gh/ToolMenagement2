@@ -14,10 +14,13 @@ namespace Tool_Menagement.Controllers
         public CategoryController(ICategoryRepository kategoriaRepository, ToolsBaseContext context)
         {
             _context = context;
+            bool zxv = false;
             //Return_Categories return_Categories = new Return_Categories();
             //return_Categories.fillTable(_context);
-            ConfigTools configTools = new ConfigTools();
+            //ConfigTools configTools = new ConfigTools();
             //configTools.fillTable(_context);
+            /*Zlecenie_Available_Tools available_Tools=new Zlecenie_Available_Tools();
+            zxv = available_Tools.Can_create(_context, 8);*/
             _kategoriaRepository = kategoriaRepository;
         }
 
