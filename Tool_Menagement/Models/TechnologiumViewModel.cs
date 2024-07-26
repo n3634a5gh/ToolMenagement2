@@ -1,4 +1,6 @@
-﻿namespace Tool_Menagement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Tool_Menagement.Models
 {
     public class TechnologiumViewModel
     {
@@ -8,6 +10,8 @@
         public string Przeznaczenie { get; set; }
         public string MaterialWykonania { get; set; }
         public double Srednica { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "Czas pracy musi być liczbą większą lub równą 0")]
         public int CzasPracy { get; set; }
 
         public List<string> Opisy { get; set; }
@@ -21,8 +25,12 @@
     public class NarzedziaTechnologiumViewModel
     {
         public int IdNarzedzia { get; set; }
+
+        [Required(ErrorMessage = "Opis technologii jest wymagany")]
+        [StringLength(1000, MinimumLength = 5, ErrorMessage = "Opis technologii musi mieć minimum 5 znaków i zaczynać się od dużej litery")]
+        [RegularExpression(@"^[A-Z].*", ErrorMessage = "Opis technologii musi zaczynać się od dużej litery")]
         public string Nazwa { get; set; }
-        public int CzasPracy { get; set; }
+        public int? CzasPracy { get; set; }
     }
 
 }

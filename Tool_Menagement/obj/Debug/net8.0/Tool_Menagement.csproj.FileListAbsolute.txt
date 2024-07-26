@@ -160,3 +160,7 @@ C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\Microsof
 C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\Microsoft.Extensions.Localization.Abstractions.dll
 C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\Microsoft.JSInterop.dll
 C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\MudBlazor.dll
+C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\FluentValidation.dll
+C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
+C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\48519\Desktop\Tool_Menagement\Tool_Menagement\obj\Debug\net8.0\Tool_Menagement.MvcApplicationPartsAssemblyInfo.cs

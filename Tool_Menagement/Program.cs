@@ -1,7 +1,9 @@
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Tool_Menagement.Interfaces;
 using Tool_Menagement.Models;
 using Tool_Menagement.Repositories;
+using Tool_Menagement.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +13,7 @@ builder.Services.AddScoped<ITechnologieRepository, TechnologieRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<TechnologiaViewModel>());
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

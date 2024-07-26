@@ -11,13 +11,7 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("Tool_Menagement")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22ed62a0f56c069726f00846b6caffbe3a8252e0")]
-[assembly: System.Reflection.AssemblyProductAttribute("Tool_Menagement")]
-[assembly: System.Reflection.AssemblyTitleAttribute("Tool_Menagement")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+[assembly: Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPartAttribute("FluentValidation.AspNetCore")]
 
 // Wygenerowane przez klasę WriteCodeFragment programu MSBuild.
 

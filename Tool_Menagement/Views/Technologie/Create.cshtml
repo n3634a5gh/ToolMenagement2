@@ -7,13 +7,22 @@
 <h1>Create</h1>
 
 <h4>Technologia</h4>
+
+@if (TempData["ErrorMessage1"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage1"]
+    </div>
+}
+
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" method="post">
             <div class="form-group">
                 <label asp-for="OpisTechnologii" class="control-label"></label>
-                <input asp-for="OpisTechnologii" class="form-control" id="OpisTechnologii" />
+                <input asp-for="OpisTechnologii" class="form-control" id="OpisTechnologii" placeholder="Min 5 znaków" />
+                <span asp-validation-for="OpisTechnologii" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Opis" class="control-label"></label>
@@ -48,7 +57,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="CzasPracy" class="control-label"></label>
-                <input asp-for="CzasPracy" class="form-control" id="CzasPracy" />
+                <input asp-for="CzasPracy" class="form-control" id="CzasPracy" placeholder="Wprowadź czas pracy" />
+                <span asp-validation-for="CzasPracy" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <button type="button" id="DodajNarzedzie" class="btn btn-secondary">Dodaj Narzędzie</button>
@@ -90,6 +100,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            $('#CzasPracy').val('');
             $('#Opis').change(function () {
                 var selectedOpis = $(this).val();
                 if (selectedOpis) {
@@ -153,8 +164,17 @@
                 var selectedMaterialWykonania = $('#MaterialWykonania').val();
                 var selectedSrednica = $('#Srednica').val();
                 var czasPracy = $('#CzasPracy').val();
+                function isValidInt(value) {
+                    var intValue = parseInt(value, 10);
+                    return !isNaN(intValue) && intValue >= 0;
+                }
 
                 if (selectedOpis && selectedPrzeznaczenie && selectedMaterialWykonania && selectedSrednica && czasPracy) {
+                    if (!isValidInt(czasPracy)) {
+                        alert("Czas Pracy musi być nieujemną liczbą całkowitą.");
+                        return;
+                    }
+
                     $.ajax({
                         url: '@Url.Action("GetIdNarzedzia", "Technologie")',
                         type: 'GET',
@@ -201,6 +221,31 @@
                     $('#ZapiszTechnologie').prop('disabled', true);
                 }
             });
+
+            /*$('form').validate({
+                rules: {
+                    OpisTechnologii: {
+                        required: true,
+                        minlength: 5
+                    },
+                    CzasPracy: {
+                        required: true,
+                        number: true,
+                        min: 0
+                    }
+                },
+                messages: {
+                    OpisTechnologii: {
+                        required: "Opis  jest wymagany",
+                        minlength: "Opis  dłuższy niż 5 znaków"
+                    },
+                    CzasPracy: {
+                        required: "Pole wymagane",
+                        number: "Czas pracy type INT",
+                        min: "Czas pracy >= 0"
+                    }
+                });*/
+            $('#Opis').val('');
         });
     </script>
 }

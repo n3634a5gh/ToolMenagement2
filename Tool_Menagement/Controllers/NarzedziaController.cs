@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 using Tool_Menagement.Models;
 using Tool_Menagement.Helpers;
 
-namespace Tool_Menagement.Controllers
-{
     public class NarzedziaController : Controller
     {
         private readonly ToolsBaseContext _context;
-
+        private bool _activewarning = false;
         public NarzedziaController(ToolsBaseContext context)
         {
             _context = context;
@@ -27,13 +25,14 @@ namespace Tool_Menagement.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var kategorie = await _context.Kategoria.ToListAsync();
-            ViewBag.Opisy = kategorie.Select(k => k.Opis).Distinct().ToList();
-            ViewBag.Przeznaczenia = kategorie.Select(k => k.Przeznaczenie).Distinct().ToList();
-            ViewBag.MaterialyWykonania = kategorie.Select(k => k.MaterialWykonania).Distinct().ToList();
-
-            return View();
+            await SetViewBags();
+        if (_activewarning)
+        {
+            TempData["ErrorMessage1"] = "Średnica musi być typu double";
+            _activewarning = false;
         }
+        return View();
+    }
 
         [HttpGet]
         public async Task<IActionResult> GetPrzeznaczenia(string opis)
@@ -60,6 +59,14 @@ namespace Tool_Menagement.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] NarzedzieViewModel model)
+        {
+        if (_activewarning)
+        {
+            TempData["ErrorMessage1"] = "Średnica musi być typu double";
+            _activewarning = false;
+        }
+        Validators validators = new Validators();
+        if (validators.Validate_Double(Convert.ToString(model.Srednica)))
         {
             if (ModelState.IsValid)
             {
@@ -115,12 +122,34 @@ namespace Tool_Menagement.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(model);
+            else
+            {
+                _activewarning = true;
+                await SetViewBags();
+                return View(model);
+            }
+            
         }
-
-        //return View(model);
-        // }
-
+        else 
+        {
+            _activewarning = true;
+            TempData["ErrorMessage1"] = "Średnica musi być typu double";
+            _activewarning = true;
+            await SetViewBags();
+            return RedirectToAction(nameof(Create));
+        }
     }
+
+
+    //return View(model);
+    // }
+
+    private async Task SetViewBags()
+    {
+        var kategorie = await _context.Kategoria.ToListAsync();
+        ViewBag.Opisy = kategorie.Select(k => k.Opis).Distinct().ToList();
+        ViewBag.Przeznaczenia = kategorie.Select(k => k.Przeznaczenie).Distinct().ToList();
+        ViewBag.MaterialyWykonania = kategorie.Select(k => k.MaterialWykonania).Distinct().ToList();
+    }
+
 }

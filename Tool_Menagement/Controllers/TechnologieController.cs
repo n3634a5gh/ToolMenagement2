@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tool_Menagement.Helpers;
 using Tool_Menagement.Interfaces;
 using Tool_Menagement.Models;
+using static MudBlazor.Icons;
 
 public class TechnologieController : Controller
 {
@@ -20,7 +22,8 @@ public class TechnologieController : Controller
     {
         var model = new TechnologiumViewModel
         {
-            Opisy = await _context.Kategoria.Select(k => k.Opis).Distinct().ToListAsync()
+            Opisy = await _context.Kategoria.Select(k => k.Opis).Distinct().ToListAsync(),
+            //CzasPracy = Convert.ToInt32(null)
         };
         return View(model);
     }
@@ -29,8 +32,12 @@ public class TechnologieController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(TechnologiumViewModel model)
     {
-        //if (ModelState.IsValid)
-        //{
+        /*if (ModelState.IsValid)
+        {*/
+        Validators validators = new Validators();
+        model.OpisTechnologii = validators.Validate_Name(model.OpisTechnologii);
+        if(!string.IsNullOrEmpty(model.OpisTechnologii))
+        {
             var technologie = new Technologium
             {
                 Opis = model.OpisTechnologii,
@@ -42,7 +49,7 @@ public class TechnologieController : Controller
                 technologie.NarzedziaTechnologia.Add(new NarzedziaTechnologium
                 {
                     IdNarzedzia = narzedziaTech.IdNarzedzia,
-                    CzasPracy = narzedziaTech.CzasPracy
+                    CzasPracy = (int)narzedziaTech.CzasPracy
                 });
             }
 
@@ -50,9 +57,15 @@ public class TechnologieController : Controller
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-        //}
+        }
+        else
+        {
+            TempData["ErrorMessage1"] = "Nazwa technologii :długość min 5 znaków";
+            return RedirectToAction(nameof(Create));
+        }
+        /*}
 
-        /*model.Opisy = await _context.Kategoria.Select(k => k.Opis).Distinct().ToListAsync();
+        model.Opisy = await _context.Kategoria.Select(k => k.Opis).Distinct().ToListAsync();
         return View(model);*/
     }
 
@@ -155,6 +168,10 @@ public class TechnologieController : Controller
             _context.Zlecenies.Add(noweZlecenie);
             await _context.SaveChangesAsync();
 
+            int created_order = _context.Zlecenies.OrderBy(y=>y.IdZlecenia).Select(x => x.IdZlecenia).LastOrDefault();
+
+            availableTools.Zlecenie_ID_Magazyn_Tools(_context, created_order);
+
             return RedirectToAction(nameof(Index));
         }
         else
@@ -172,6 +189,8 @@ public class TechnologieController : Controller
         {
             zlecenie.Aktywne = false;
             await _technologieRepository.UpdateZlecenieAsync(zlecenie);
+            var disableOrderTools = new Zlecenie_Available_Tools();
+            disableOrderTools.Close_Zlecenie_ID_Magazyn(_context, zlecenieId);
         }
 
         return RedirectToAction(nameof(Index));

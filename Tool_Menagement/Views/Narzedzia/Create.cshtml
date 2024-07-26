@@ -6,7 +6,24 @@
 <h1>Create</h1>
 
 <h4>Narzedzie</h4>
+
 <hr />
+@if (TempData["ErrorMessage1"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage1"]
+    </div>
+}
+
+@if (ViewData.ModelState.ErrorCount > 0)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" method="post">
@@ -33,11 +50,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="Srednica" class="control-label"></label>
-                <input asp-for="Srednica" class="form-control" />
+                <input asp-for="Srednica" class="form-control" placeholder="(double)" />
             </div>
             <div class="form-group">
                 <label asp-for="Trwalosc" class="control-label"></label>
-                <input asp-for="Trwalosc" class="form-control" />
+                <input asp-for="Trwalosc" class="form-control" placeholder="(int)" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
