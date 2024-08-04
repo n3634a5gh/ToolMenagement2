@@ -29,5 +29,15 @@
             bool isdouble = double.TryParse(input, out double result);
             return isdouble;
         }
+
+        public bool Validate_INT(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
+            bool isint = int.TryParse(input, out int result);
+            return isint;
+        }
     }
 }
