@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tool_Menagement.Models;
 
-public partial class ToolsBaseContext : DbContext
+public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, IdentityRole, string>
 {
     public ToolsBaseContext()
     {
@@ -29,12 +31,64 @@ public partial class ToolsBaseContext : DbContext
 
     public virtual DbSet<Zlecenie> Zlecenies { get; set; }
     public virtual DbSet<Zlecenie_TT> Zlecenie_TT { get; set; }
+    public virtual DbSet<IdentityUser> IdentityUser { get; set; }
+    public virtual DbSet<IdentityUser> IdentityRole { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionStrings:MyDatabase");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<IdentityUser>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserName).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<IdentityRole>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+            entity.Property(e => e.LoginProvider).HasMaxLength(128);
+            entity.Property(e => e.ProviderKey).HasMaxLength(128);
+        });
+
+        modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.RoleId });
+        });
+
+        modelBuilder.Entity<IdentityUserToken<string>>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+            entity.Property(e => e.LoginProvider).HasMaxLength(128);
+            entity.Property(e => e.Name).HasMaxLength(128);
+        });
+
+        modelBuilder.Entity<IdentityUserClaim<string>>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ClaimType).HasMaxLength(256);
+            entity.Property(e => e.ClaimValue).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<IdentityRoleClaim<string>>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ClaimType).HasMaxLength(256);
+            entity.Property(e => e.ClaimValue).HasMaxLength(256);
+        });
+
         modelBuilder.Entity<Kategorium>(entity =>
         {
             entity.HasKey(e => e.IdKategorii).HasName("PK__Kategori__E2A56928B2A8F3CE");
