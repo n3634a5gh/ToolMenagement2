@@ -9,9 +9,9 @@ public partial class Kategorium
 
     public string Opis { get; set; } = null!;
 
-    public string? Przeznaczenie { get; set; }
+    public int ToolPolicy { get; set; }
 
-    public string? MaterialWykonania { get; set; }
+    public virtual ICollection<KategoriaDetail> KategoriaDetails { get; set; } = new List<KategoriaDetail>();
 
     public virtual ICollection<Narzedzie> Narzedzies { get; set; } = new List<Narzedzie>();
 }

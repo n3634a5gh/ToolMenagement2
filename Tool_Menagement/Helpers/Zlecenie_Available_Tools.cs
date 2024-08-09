@@ -84,27 +84,27 @@ namespace Tool_Menagement.Helpers
 
             foreach(var item in available_tools)
             {
-                var new_zlecenieTT_position = new Zlecenie_TT
+                var new_zlecenieTT_position = new OrderTT
                 {
-                    IdZlecenia = orderID,
-                    IdNarzedzia = item.PozycjaMagazynowa,
-                    Aktywne = true
+                    OrderId = orderID,
+                    ToolId = item.PozycjaMagazynowa,
+                    Active = true
                 };
 
-                _context.Zlecenie_TT.Add(new_zlecenieTT_position);
+                _context.OrderTTs.Add(new_zlecenieTT_position);
                 _context.SaveChanges();
             }
         }
 
         public void Close_Zlecenie_ID_Magazyn(ToolsBaseContext _context, int orderID)
         {
-            var zleceniaTT = _context.Zlecenie_TT
-                .Where(z => z.IdZlecenia == orderID)
+            var zleceniaTT = _context.OrderTTs
+                .Where(z => z.OrderId == orderID)
                 .ToList();
 
             foreach (var zlecenie in zleceniaTT)
             {
-                zlecenie.Aktywne = false;
+                zlecenie.Active = false;
             }
 
             _context.SaveChanges();

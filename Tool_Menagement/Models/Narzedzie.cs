@@ -11,7 +11,7 @@ public partial class Narzedzie
 
     public string Nazwa { get; set; } = null!;
 
-    public double Srednica { get; set; }
+    public double ?Srednica { get; set; }
 
     public virtual Kategorium IdKategoriiNavigation { get; set; } = null!;
 

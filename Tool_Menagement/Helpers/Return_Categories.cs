@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq;
@@ -12,10 +13,11 @@ namespace Tool_Menagement.Helpers
         public void fillTable(ToolsBaseContext _context)
         {
             string[] materials = new string[] { "HSS", "HSS-Co", "HM", "PM", "DIA", "VHM" };
-            string[] opisy = new string[] { "Frez kątowy", "Frez modułowy", "Frez trzpieniowy składany", "Frez walcowo-czołowy", "Frez walcowo-czołowy nasadzany", "Frez walcowy z łbem kulistym", "Głowica Frezarska", "Gwintownik", "Wiertło" };
+            //string[] opisy = new string[] { "Frez kątowy", "Frez modułowy", "Frez trzpieniowy składany", "Frez walcowo-czołowy", "Frez walcowo-czołowy nasadzany", "Frez walcowy z łbem kulistym", "Głowica Frezarska", "Gwintownik", "Wiertło" };
             string[] przeznacz = new string[] { "Drewno", "Nieżelazne", "Stal", "Tworzywa sztuczne" };
             var category = new Kategorium();
-            for (int i = 0; i < materials.Length; i++)
+            var categorydetails=new KategoriaDetail();
+            /*for (int i = 0; i < materials.Length; i++)
             {
                 for (int j = 0; j < opisy.Length; j++)
                 {
@@ -31,8 +33,25 @@ namespace Tool_Menagement.Helpers
                         // _context.SaveChanges(); 
                     }
                 }
+            }*/
+
+            for(int i=0;i<materials.Length;i++)
+            {
+                for (int j = 0; j < przeznacz.Length; j++)
+                {
+                    for(int k = 11;k <= 11;k++)
+                    {
+                        categorydetails = new KategoriaDetail()
+                        {
+                            IdKategorii =k,
+                            MaterialWykonania =materials[i],
+                            Przeznaczenie =przeznacz[j]
+                        };
+                        _context.KategoriaDetails.Add(categorydetails);
+                        _context.SaveChanges();
+                    }
+                }
             }
-            _context.SaveChanges();
         }
     }
 }

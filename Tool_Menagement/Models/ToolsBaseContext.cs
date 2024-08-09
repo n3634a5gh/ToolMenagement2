@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tool_Menagement.Models;
 
-namespace Tool_Menagement.Models;
 
-public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, IdentityRole, string>
+public partial class ToolsBaseContext : DbContext
 {
     public ToolsBaseContext()
     {
@@ -17,6 +15,8 @@ public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, Identity
     {
     }
 
+    public virtual DbSet<KategoriaDetail> KategoriaDetails { get; set; }
+
     public virtual DbSet<Kategorium> Kategoria { get; set; }
 
     public virtual DbSet<Magazyn> Magazyns { get; set; }
@@ -25,78 +25,44 @@ public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, Identity
 
     public virtual DbSet<Narzedzie> Narzedzies { get; set; }
 
+    public virtual DbSet<OrderTT> OrderTTs { get; set; }
+
     public virtual DbSet<Rejestracja> Rejestracjas { get; set; }
 
     public virtual DbSet<Technologium> Technologia { get; set; }
 
     public virtual DbSet<Zlecenie> Zlecenies { get; set; }
-    public virtual DbSet<Zlecenie_TT> Zlecenie_TT { get; set; }
-    public virtual DbSet<IdentityUser> IdentityUser { get; set; }
-    public virtual DbSet<IdentityUser> IdentityRole { get; set; }
-
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=ConnectionStrings:MyDatabase");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-IKCEP9LL\\SQLEXPRESS;Initial Catalog=Tools_Base;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<IdentityUser>(entity =>
+        modelBuilder.Entity<KategoriaDetail>(entity =>
         {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.UserName).IsRequired().HasMaxLength(256);
-            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
-            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
-        });
+            entity.HasKey(e => e.IdDetail).HasName("PK__Details");
 
-        modelBuilder.Entity<IdentityRole>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(256);
-            entity.Property(e => e.NormalizedName).HasMaxLength(256);
-        });
+            entity.ToTable("Kategoria_Details");
 
-        modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
-        {
-            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
-            entity.Property(e => e.LoginProvider).HasMaxLength(128);
-            entity.Property(e => e.ProviderKey).HasMaxLength(128);
-        });
+            entity.Property(e => e.IdDetail).HasColumnName("Id_Detail");
+            entity.Property(e => e.IdKategorii).HasColumnName("Id_Kategorii");
+            entity.Property(e => e.MaterialWykonania).HasColumnName("Material_wykonania");
+            entity.Property(e => e.Przeznaczenie).HasMaxLength(64);
 
-        modelBuilder.Entity<IdentityUserRole<string>>(entity =>
-        {
-            entity.HasKey(e => new { e.UserId, e.RoleId });
-        });
-
-        modelBuilder.Entity<IdentityUserToken<string>>(entity =>
-        {
-            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
-            entity.Property(e => e.LoginProvider).HasMaxLength(128);
-            entity.Property(e => e.Name).HasMaxLength(128);
-        });
-
-        modelBuilder.Entity<IdentityUserClaim<string>>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.ClaimType).HasMaxLength(256);
-            entity.Property(e => e.ClaimValue).HasMaxLength(256);
-        });
-
-        modelBuilder.Entity<IdentityRoleClaim<string>>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.ClaimType).HasMaxLength(256);
-            entity.Property(e => e.ClaimValue).HasMaxLength(256);
+            entity.HasOne(d => d.IdKategoriiNavigation).WithMany(p => p.KategoriaDetails)
+                .HasForeignKey(d => d.IdKategorii)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rST_Kategoria_Details_Kategoria");
         });
 
         modelBuilder.Entity<Kategorium>(entity =>
         {
-            entity.HasKey(e => e.IdKategorii).HasName("PK__Kategori__E2A56928B2A8F3CE");
+            entity.HasKey(e => e.IdKategorii).HasName("PK__Kategori__E2A56928424329DE");
 
             entity.Property(e => e.IdKategorii).HasColumnName("Id_Kategorii");
-            entity.Property(e => e.MaterialWykonania).HasColumnName("Material_wykonania");
-            entity.Property(e => e.Opis).HasMaxLength(32);
-            entity.Property(e => e.Przeznaczenie).HasMaxLength(32);
+            entity.Property(e => e.Opis).HasMaxLength(64);
+            entity.Property(e => e.ToolPolicy).HasColumnName("Tool_Policy");
         });
 
         modelBuilder.Entity<Magazyn>(entity =>
@@ -117,7 +83,7 @@ public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, Identity
 
         modelBuilder.Entity<NarzedziaTechnologium>(entity =>
         {
-            entity.HasKey(e => new { e.IdNarzedzia, e.IdTechnologi }).HasName("PK__Narzedzi__6ED7F3187D2CDCAB");
+            entity.HasKey(e => new { e.IdNarzedzia, e.IdTechnologi }).HasName("PK__Narzedzi__6ED7F3186DF4FFF6");
 
             entity.ToTable("Narzedzia_Technologia");
 
@@ -150,6 +116,22 @@ public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, Identity
                 .HasForeignKey(d => d.IdKategorii)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rST_NarzedzieKategoria");
+        });
+
+        modelBuilder.Entity<OrderTT>(entity =>
+        {
+            entity.HasKey(e => e.PositionId);
+
+            entity.ToTable("OrderTT");
+
+            entity.Property(e => e.PositionId).HasColumnName("Position_Id");
+            entity.Property(e => e.OrderId).HasColumnName("Order_Id");
+            entity.Property(e => e.ToolId).HasColumnName("Tool_Id");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderTTs)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("rST_OrderTT_Zlecenie");
         });
 
         modelBuilder.Entity<Rejestracja>(entity =>
@@ -193,22 +175,6 @@ public partial class ToolsBaseContext : IdentityDbContext<IdentityUser, Identity
                 .HasForeignKey(d => d.IdTechnologi)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("rST_ZlecenieTechnologia");
-        });
-        modelBuilder.Entity<Zlecenie_TT>(entity =>
-        {
-            entity.HasKey(e => e.IdPozycji).HasName("PK_OrderTT");
-
-            entity.ToTable("OrderTT");
-
-            entity.Property(e => e.IdPozycji).HasColumnName("Position_Id");
-            entity.Property(e => e.IdZlecenia).HasColumnName("Order_Id");
-            entity.Property(e => e.IdNarzedzia).HasColumnName("Tool_Id");
-            entity.Property(e => e.Aktywne).HasColumnName("Active");
-
-            entity.HasOne(d => d.IdZlecenieNavigation).WithMany(p => p.ZlecenieTT)
-                .HasForeignKey(d => d.IdZlecenia)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("rST_OrderTT_Zlecenie");
         });
 
         OnModelCreatingPartial(modelBuilder);

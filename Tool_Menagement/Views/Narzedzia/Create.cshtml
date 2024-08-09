@@ -57,6 +57,11 @@
                 <input asp-for="Trwalosc" class="form-control" placeholder="(int)" />
             </div>
             <div class="form-group">
+                <label asp-for="Ilosc" class="control-label"></label>
+                <input asp-for="Ilosc" class="form-control" />
+                <span asp-validation-for="Ilosc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -81,9 +86,15 @@
                         success: function (data) {
                             $('#Przeznaczenie').empty();
                             $('#Przeznaczenie').append('<option value="">-- Wybierz --</option>');
-                            $.each(data, function (index, value) {
+                            $.each(data.przeznaczenia, function (index, value) {
                                 $('#Przeznaczenie').append('<option value="' + value + '">' + value + '</option>');
                             });
+
+                            if (data.loadOtherView) {
+                                disableFields(true);
+                            } else {
+                                disableFields(false);
+                            }
                         }
                     });
                 }
@@ -107,12 +118,25 @@
                     });
                 }
             });
-            /*$('#Trwalosc').on('input', function () {
-                var value = $(this).val();
-                if (value < 0) {
-                    $(this).val(0);
+
+            function disableFields(disable) {
+                if (disable) {
+                    $('#MaterialWykonania').prop('disabled', true).removeAttr('name').removeAttr('data-val').removeAttr('data-val-required');
+                    $('#Srednica').prop('disabled', true).removeAttr('name').removeAttr('data-val').removeAttr('data-val-required');
+                    $('#Trwalosc').prop('disabled', true).removeAttr('name').removeAttr('data-val').removeAttr('data-val-required');
+                    $('#MaterialWykonania').closest('.form-group').hide();
+                    $('#Srednica').closest('.form-group').hide();
+                    $('#Trwalosc').closest('.form-group').hide();
+                } else {
+                    $('#MaterialWykonania').prop('disabled', false).attr('name', 'MaterialWykonania').attr('data-val', 'true').attr('data-val-required', 'The Materiał Wykonania field is required.');
+                    $('#Srednica').prop('disabled', false).attr('name', 'Srednica').attr('data-val', 'true').attr('data-val-required', 'The Średnica field is required.');
+                    $('#Trwalosc').prop('disabled', false).attr('name', 'Trwalosc').attr('data-val', 'true').attr('data-val-required', 'The Trwałość field is required.');
+                    $('#MaterialWykonania').closest('.form-group').show();
+                    $('#Srednica').closest('.form-group').show();
+                    $('#Trwalosc').closest('.form-group').show();
                 }
-            });*/
+            }
         });
     </script>
 }
+

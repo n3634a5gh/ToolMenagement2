@@ -146,7 +146,7 @@
                     $.ajax({
                         url: '@Url.Action("GetSrednice", "Technologie")',
                         type: 'GET',
-                        data: { opis: selectedOpis, przeznaczenie: selectedPrzeznaczenie, materialWykonania: selectedMaterialWykonania },
+                        data: { opis: selectedOpis, przeznaczenie: selectedPrzeznaczenie, materialWykonania: selectedMaterialWykonania || null },
                         success: function (data) {
                             $('#Srednica').empty();
                             $('#Srednica').append('<option value="">-- Wybierz --</option>');
@@ -157,6 +157,7 @@
                     });
                 }
             });
+
 
             $('#DodajNarzedzie').click(function () {
                 var selectedOpis = $('#Opis').val();

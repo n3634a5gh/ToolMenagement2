@@ -29,37 +29,31 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Opis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Przeznaczenie)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaterialWykonania)
-            </th>
-            <th></th>
+            <th>Opis</th>
+            <th>Polityka narzędziowa</th>
+            <th>Przeznaczenie</th>
+            <th>Material Wykonania</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Opis)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Przeznaczenie)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MaterialWykonania)
-                </td>
-                <!-- <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdKategorii">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdKategorii">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdKategorii">Delete</a>
-                </td>-->
-            </tr>
+            foreach (var detail in item.KategoriaDetails)
+            {
+                <tr>
+                    <td>@item.Opis</td>
+                    <td>@item.ToolPolicy</td>
+                    <td>@detail.Przeznaczenie</td>
+                    @if(detail.MaterialWykonania==null)
+                    {
+                        <td>N/D</td>
+                    }
+                    else
+                    {
+                        <td>@detail.MaterialWykonania</td>
+                    }
+                </tr>
+            }
         }
     </tbody>
 </table>

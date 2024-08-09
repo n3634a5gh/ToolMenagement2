@@ -12,12 +12,12 @@ namespace Tool_Menagement.Helpers
     {
         public void fillTable(ToolsBaseContext _context)
         {
-            var CatId=_context.Kategoria
+            /*var CatId=_context.Kategoria
                 .Where(m=>m.Opis== "Frez walcowy z łbem kulistym")
                 /*.Where(n=>n.MaterialWykonania== "PM" || n.MaterialWykonania== "DIA" || 
                 n.MaterialWykonania == "VHM")
                 .Where(k=>k.Przeznaczenie== "Nieżelazne" || k.Przeznaczenie== "Stal")*/
-                .Select(n=>n.IdKategorii)
+                /*.Select(n=>n.IdKategorii)
                 .ToArray();
             string opis = "",material="", przeznacz="";
             double sred = 0;
@@ -67,7 +67,7 @@ namespace Tool_Menagement.Helpers
                     _context.Magazyns.Add(magazyn);
                     _context.SaveChanges();
                 }
-            }
+            }*/
         }
     }
 }

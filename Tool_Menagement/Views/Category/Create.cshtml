@@ -1,4 +1,4 @@
-﻿@model Tool_Menagement.Models.Kategorium
+﻿@model Tool_Menagement.Models.KategoriaViewModel
 
 @{
     ViewData["Title"] = "Create Category";
@@ -12,6 +12,11 @@
             <label asp-for="Opis" class="control-label mud-typography"></label>
             <input asp-for="Opis" class="form-control" />
             <span asp-validation-for="Opis" class="text-danger"></span>
+        </div>
+        <div class="mud-text-field">
+            <label asp-for="ToolPolicy" class="control-label mud-typography"></label>
+            <select asp-for="ToolPolicy" class="form-control" asp-items="ViewBag.ToolPolicyOptions"></select>
+            <span asp-validation-for="ToolPolicy" class="text-danger"></span>
         </div>
         <div class="mud-text-field">
             <label asp-for="Przeznaczenie" class="control-label mud-typography"></label>

@@ -1,0 +1,46 @@
+﻿@model Tool_Menagement.Models.RejestracjaViewModel
+
+@{
+    ViewData["Title"] = "Rejestracja";
+}
+
+<h1>Create Rejestracja</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="IdZlecenia" class="control-label"></label>
+        <input asp-for="IdZlecenia" class="form-control" />
+        <span asp-validation-for="IdZlecenia" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Sztuk" class="control-label"></label>
+        <input asp-for="Sztuk" class="form-control" />
+        <span asp-validation-for="Sztuk" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Wykonal" class="control-label"></label>
+        <input asp-for="Wykonal" class="form-control" />
+        <span asp-validation-for="Wykonal" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -13,6 +13,7 @@ public partial class Zlecenie
 
     public virtual Technologium IdTechnologiNavigation { get; set; } = null!;
 
+    public virtual ICollection<OrderTT> OrderTTs { get; set; } = new List<OrderTT>();
+
     public virtual ICollection<Rejestracja> Rejestracjas { get; set; } = new List<Rejestracja>();
-    public virtual ICollection<Zlecenie_TT> ZlecenieTT { get; set; } = new List<Zlecenie_TT>();
 }

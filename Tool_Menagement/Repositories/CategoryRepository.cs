@@ -13,15 +13,28 @@ namespace Tool_Menagement.Repositories
             _context = context;
         }
 
-        public async Task AddCategoryAsync(Kategorium kategoria)
+        public async Task<Kategorium> GetByOpisAsync(string opis)
         {
-            _context.Kategoria.Add(kategoria);
+            return await _context.Kategoria.FirstOrDefaultAsync(k => k.Opis == opis);
+        }
+
+        public async Task AddKategoriumAsync(Kategorium kategorium)
+        {
+            _context.Kategoria.Add(kategorium);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Kategorium>> GetCategoryAsync()
+        public async Task AddKategoriaDetailAsync(KategoriaDetail kategoriaDetail)
         {
-            return await _context.Kategoria.ToListAsync();
+            _context.KategoriaDetails.Add(kategoriaDetail);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Kategorium>> GetAllWithDetailsAsync()
+        {
+            return await _context.Kategoria
+                .Include(k => k.KategoriaDetails)
+                .ToListAsync();
         }
     }
 }

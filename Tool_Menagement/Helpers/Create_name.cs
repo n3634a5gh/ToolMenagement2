@@ -30,5 +30,10 @@
             }
             return name;
         }
+
+        public static string Tool_Name(string Przeznaczenie)
+        {
+            return Przeznaczenie;
+        }
     }
 }

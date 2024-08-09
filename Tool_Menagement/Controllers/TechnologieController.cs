@@ -74,8 +74,13 @@ public class TechnologieController : Controller
     [HttpGet]
     public async Task<IActionResult> GetPrzeznaczenia(string opis)
     {
-        var przeznaczenia = await _context.Kategoria
+        int index = _context.Kategoria
             .Where(k => k.Opis == opis)
+            .Select(k => k.IdKategorii)
+            .FirstOrDefault();
+
+        var przeznaczenia = await _context.KategoriaDetails
+            .Where(k => k.IdKategorii == index)
             .Select(k => k.Przeznaczenie)
             .Distinct()
             .ToListAsync();
@@ -85,38 +90,96 @@ public class TechnologieController : Controller
     [HttpGet]
     public async Task<IActionResult> GetMaterialyWykonania(string opis, string przeznaczenie)
     {
-        var materialy = await _context.Kategoria
-            .Where(k => k.Opis == opis && k.Przeznaczenie == przeznaczenie)
+        int index = _context.Kategoria
+                .Where(k => k.Opis == opis)
+                .Select(k => k.IdKategorii)
+                .FirstOrDefault();
+
+        var materialy = await _context.KategoriaDetails
+            .Where(k => k.IdKategorii == index && k.Przeznaczenie == przeznaczenie)
             .Select(k => k.MaterialWykonania)
             .Distinct()
             .ToListAsync();
-        return Json(materialy);
+        return Json(materialy); ;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetSrednice(string opis, string przeznaczenie, string materialWykonania)
+    public async Task<IActionResult> GetSrednice(string opis, string przeznaczenie, string ?materialWykonania)
     {
-        var kategoria = await _context.Kategoria.FirstOrDefaultAsync(k =>
-            k.Opis == opis && k.Przeznaczenie == przeznaczenie && k.MaterialWykonania == materialWykonania);
+        var select_category = _context.Kategoria
+            .Where(k => k.Opis == opis)
+            .FirstOrDefault();
 
-        if (kategoria == null)
+        int index_for_destiny = select_category.IdKategorii;
+        int policy_t = select_category.ToolPolicy;
+        int index_for_tool = 0;
+
+
+        /*var kategoria = await _context.KategoriaDetails
+            .FirstOrDefaultAsync(k =>
+                k.IdKategorii == index &&
+                k.Przeznaczenie == przeznaczenie
+                (k.MaterialWykonania == materialWykonania || (materialWykonania == null && k.MaterialWykonania == null)));
+        */
+        var kategoria_przeznaczenie=await _context.KategoriaDetails
+            .Where(k => k.IdKategorii == index_for_destiny)
+            .Where(k=>k.Przeznaczenie==przeznaczenie)
+            .ToListAsync();
+
+        if (policy_t == 0)
+        {
+            foreach (var item in kategoria_przeznaczenie)
+            {
+                index_for_tool = item.IdKategorii;
+                break;
+            }
+        }
+        else
+        {
+            /* var kategoria = await _context.KategoriaDetails
+                 .FirstOrDefaultAsync(k =>
+                 k.IdKategorii == index_for_destiny &&
+                 k.Przeznaczenie == przeznaczenie &&
+                 k.MaterialWykonania == materialWykonania);*/
+
+            var kategoria = _context.KategoriaDetails
+                .Where(k => k.IdKategorii == index_for_destiny)
+                .Where(k => k.Przeznaczenie == przeznaczenie)
+                .Where(k => k.MaterialWykonania == materialWykonania)
+                .FirstOrDefault();
+
+            index_for_tool = kategoria.IdKategorii;
+        }
+
+
+        if (index_for_tool == null)
         {
             return Json(new List<double>());
         }
 
         var srednice = await _context.Narzedzies
-            .Where(n => n.IdKategorii == kategoria.IdKategorii)
+            .Where(n => n.IdKategorii == index_for_tool)
             .Select(n => n.Srednica)
             .Distinct()
             .ToListAsync();
+
         return Json(srednice);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> GetIdNarzedzia(string opis, string przeznaczenie, string materialWykonania, double srednica)
     {
-        var kategoria = await _context.Kategoria.FirstOrDefaultAsync(k =>
-            k.Opis == opis && k.Przeznaczenie == przeznaczenie && k.MaterialWykonania == materialWykonania);
+        int index = _context.Kategoria
+            .Where(k => k.Opis == opis)
+            .Select(k => k.IdKategorii)
+            .FirstOrDefault();
+
+        var kategoria = await _context.KategoriaDetails
+            .FirstOrDefaultAsync(k =>
+                k.IdKategorii == index &&
+                k.Przeznaczenie == przeznaczenie &&
+                (k.MaterialWykonania == materialWykonania || (materialWykonania == null && k.MaterialWykonania == null)));
 
         if (kategoria == null)
         {
@@ -133,6 +196,7 @@ public class TechnologieController : Controller
 
         return Json(new { idNarzedzia = narzedzie.IdNarzedzia, nazwa = narzedzie.Nazwa });
     }
+
 
     public async Task<IActionResult> Index()
     {
