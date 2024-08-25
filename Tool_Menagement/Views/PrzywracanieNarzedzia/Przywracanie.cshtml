@@ -1,0 +1,43 @@
+﻿@model Tool_Menagement.Models.PrzywracanieNarzedziaViewModel
+
+@{
+    ViewData["Title"] = "Przywracanie narzędzia";
+}
+
+<h4>Przywracanie narzędzia</h4>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Przywracanie" method="post">
+            <div class="form-group">
+                <label asp-for="NumerNarzedzia" class="control-label"></label>
+                <input asp-for="NumerNarzedzia" class="form-control" />
+                <span asp-validation-for="NumerNarzedzia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Przywróć" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

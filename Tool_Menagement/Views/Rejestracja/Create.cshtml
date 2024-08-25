@@ -19,6 +19,12 @@
         @TempData["SuccessMessage"]
     </div>
 }
+@if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["WarningMessage"]
+    </div>
+}
 
 <form asp-action="Create" method="post">
     <div class="form-group">

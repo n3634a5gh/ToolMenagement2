@@ -57,12 +57,13 @@ namespace Tool_Menagement.Helpers
 
         public void Zlecenie_ID_Magazyn_Tools(ToolsBaseContext _context, int orderID)
         {
-            //narzędzia dla tworzonego zlecenia(magazynowe)
+            //id technologi na podstawie orderid
             int technologyID = _context.Zlecenies
                 .Where(n => n.IdZlecenia == orderID)
                 .Select(k => k.IdTechnologi)
                 .FirstOrDefault();
 
+            //pobranie listy wszystkich odpowiadających pozycji magazynowych
             var available_tools = _context.NarzedziaTechnologia
             .Where(technologium => technologium.IdTechnologi == technologyID)
             .Join(
@@ -80,10 +81,13 @@ namespace Tool_Menagement.Helpers
             .Where(magazyn => magazyn.Wycofany == false)
             .Where(magazyn => magazyn.Regeneracja == false)
             .Where(magazyn => magazyn.Uzycie < magazyn.Trwalosc)
+            .GroupBy(magazyn => magazyn.IdNarzedzia)
+            .Select(group => group.OrderBy(m => m.PozycjaMagazynowa).FirstOrDefault())
             .ToArray();
 
-            foreach(var item in available_tools)
+            foreach (var item in available_tools)
             {
+
                 var new_zlecenieTT_position = new OrderTT
                 {
                     OrderId = orderID,

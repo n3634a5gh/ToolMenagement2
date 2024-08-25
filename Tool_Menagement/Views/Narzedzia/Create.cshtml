@@ -126,14 +126,12 @@
                     $('#Trwalosc').prop('disabled', true).removeAttr('name').removeAttr('data-val').removeAttr('data-val-required');
                     $('#MaterialWykonania').closest('.form-group').hide();
                     $('#Srednica').closest('.form-group').hide();
-                    $('#Trwalosc').closest('.form-group').hide();
                 } else {
                     $('#MaterialWykonania').prop('disabled', false).attr('name', 'MaterialWykonania').attr('data-val', 'true').attr('data-val-required', 'The Materiał Wykonania field is required.');
                     $('#Srednica').prop('disabled', false).attr('name', 'Srednica').attr('data-val', 'true').attr('data-val-required', 'The Średnica field is required.');
                     $('#Trwalosc').prop('disabled', false).attr('name', 'Trwalosc').attr('data-val', 'true').attr('data-val-required', 'The Trwałość field is required.');
                     $('#MaterialWykonania').closest('.form-group').show();
                     $('#Srednica').closest('.form-group').show();
-                    $('#Trwalosc').closest('.form-group').show();
                 }
             }
         });

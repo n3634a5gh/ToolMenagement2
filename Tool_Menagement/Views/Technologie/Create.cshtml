@@ -1,5 +1,4 @@
 ﻿@model Tool_Menagement.Models.TechnologiumViewModel
-
 @{
     ViewData["Title"] = "Create";
 }
@@ -28,12 +27,9 @@
                 <label asp-for="Opis" class="control-label"></label>
                 <select asp-for="Opis" class="form-control" id="Opis">
                     <option value="">-- Wybierz Opis --</option>
-                    @if (Model.Opisy != null)
+                    @foreach (var item in ViewBag.Opisy as List<string>)
                     {
-                        @foreach (var item in Model.Opisy)
-                        {
-                            <option value="@item">@item</option>
-                        }
+                        <option value="@item">@item</option>
                     }
                 </select>
             </div>
@@ -111,7 +107,7 @@
                         success: function (data) {
                             $('#Przeznaczenie').empty();
                             $('#Przeznaczenie').append('<option value="">-- Wybierz --</option>');
-                            $.each(data, function (index, value) {
+                            $.each(data.przeznaczenia, function (index, value) {
                                 $('#Przeznaczenie').append('<option value="' + value + '">' + value + '</option>');
                             });
                         }
@@ -158,6 +154,10 @@
                 }
             });
 
+            function isValidInt(value) {
+                var intValue = parseInt(value, 10);
+                return !isNaN(intValue) && intValue >= 0 && intValue.toString() === value;
+            }
 
             $('#DodajNarzedzie').click(function () {
                 var selectedOpis = $('#Opis').val();
@@ -165,14 +165,10 @@
                 var selectedMaterialWykonania = $('#MaterialWykonania').val();
                 var selectedSrednica = $('#Srednica').val();
                 var czasPracy = $('#CzasPracy').val();
-                function isValidInt(value) {
-                    var intValue = parseInt(value, 10);
-                    return !isNaN(intValue) && intValue >= 0;
-                }
 
                 if (selectedOpis && selectedPrzeznaczenie && selectedMaterialWykonania && selectedSrednica && czasPracy) {
                     if (!isValidInt(czasPracy)) {
-                        alert("Czas Pracy musi być nieujemną liczbą całkowitą.");
+                        alert("Czas Pracy=INT, value>0.");
                         return;
                     }
 
@@ -222,30 +218,6 @@
                     $('#ZapiszTechnologie').prop('disabled', true);
                 }
             });
-
-            /*$('form').validate({
-                rules: {
-                    OpisTechnologii: {
-                        required: true,
-                        minlength: 5
-                    },
-                    CzasPracy: {
-                        required: true,
-                        number: true,
-                        min: 0
-                    }
-                },
-                messages: {
-                    OpisTechnologii: {
-                        required: "Opis  jest wymagany",
-                        minlength: "Opis  dłuższy niż 5 znaków"
-                    },
-                    CzasPracy: {
-                        required: "Pole wymagane",
-                        number: "Czas pracy type INT",
-                        min: "Czas pracy >= 0"
-                    }
-                });*/
             $('#Opis').val('');
         });
     </script>

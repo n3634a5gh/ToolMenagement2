@@ -11,6 +11,7 @@ builder.Services.AddDbContext<ToolsBaseContext>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITechnologieRepository, TechnologieRepository>();
 builder.Services.AddScoped<IRejestracjaRepository, RejestracjaRepository>();
+builder.Services.AddScoped<INarzedziaRepository, NarzedziaRepository>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllersWithViews().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<TechnologiaViewModel>());

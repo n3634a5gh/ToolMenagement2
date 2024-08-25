@@ -1,10 +1,8 @@
-﻿//using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tool_Menagement.Helpers;
 using Tool_Menagement.Interfaces;
 using Tool_Menagement.Models;
-using static MudBlazor.Icons;
 
 public class TechnologieController : Controller
 {
@@ -15,61 +13,71 @@ public class TechnologieController : Controller
     {
         _context = context;
         _technologieRepository = technologieRepository;
-
     }
 
     public async Task<IActionResult> Create()
     {
+        await SetViewBags();
         var model = new TechnologiumViewModel
         {
             Opisy = await _context.Kategoria.Select(k => k.Opis).Distinct().ToListAsync(),
-            //CzasPracy = Convert.ToInt32(null)
+            NarzedziaTechnologia = new List<NarzedziaTechnologiumViewModel>()
         };
+
         return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(TechnologiumViewModel model)
+    public async Task<IActionResult> Create([FromForm] TechnologiumViewModel model)
     {
-        /*if (ModelState.IsValid)
-        {*/
-        Validators validators = new Validators();
-        model.OpisTechnologii = validators.Validate_Name(model.OpisTechnologii);
-        if(!string.IsNullOrEmpty(model.OpisTechnologii))
+        if (/*ModelState.IsValid*/true)
         {
-            var technologie = new Technologium
-            {
-                Opis = model.OpisTechnologii,
-                DataUtworzenia = DateTime.Now
-            };
+            Validators validators = new Validators();
+            model.OpisTechnologii = validators.Validate_Name(model.OpisTechnologii);
 
-            foreach (var narzedziaTech in model.NarzedziaTechnologia)
+            var istniejeTechnologia = await _context.Technologia
+            .AnyAsync(t => t.Opis == model.OpisTechnologii);
+
+            if (istniejeTechnologia)
             {
-                technologie.NarzedziaTechnologia.Add(new NarzedziaTechnologium
-                {
-                    IdNarzedzia = narzedziaTech.IdNarzedzia,
-                    CzasPracy = (int)narzedziaTech.CzasPracy
-                });
+                var dataUtworzenia = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                model.OpisTechnologii = $"{model.OpisTechnologii} {dataUtworzenia}";
             }
+            if (!string.IsNullOrEmpty(model.OpisTechnologii))
+            {
+                var technologie = new Technologium
+                {
+                    Opis = model.OpisTechnologii,
+                    DataUtworzenia = DateTime.Now
+                };
 
-            _context.Technologia.Add(technologie);
-            await _context.SaveChangesAsync();
+                foreach (var narzedziaTech in model.NarzedziaTechnologia)
+                {
+                    technologie.NarzedziaTechnologia.Add(new NarzedziaTechnologium
+                    {
+                        IdNarzedzia = narzedziaTech.IdNarzedzia,
+                        CzasPracy = (int)narzedziaTech.CzasPracy
+                    });
+                }
 
-            return RedirectToAction(nameof(Index));
+                _context.Technologia.Add(technologie);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["ErrorMessage1"] = "Nazwa technologii :długość min 5 znaków";
+                return RedirectToAction(nameof(Create));
+            }
         }
-        else
+        /*else
         {
-            TempData["ErrorMessage1"] = "Nazwa technologii :długość min 5 znaków";
+            TempData["ErrorMessage1"] = "Nieprawidłowa wartość czasu.";
             return RedirectToAction(nameof(Create));
-        }
-        /*}
-
-        model.Opisy = await _context.Kategoria.Select(k => k.Opis).Distinct().ToListAsync();
-        return View(model);*/
+        }*/
     }
-
-
 
     [HttpGet]
     public async Task<IActionResult> GetPrzeznaczenia(string opis)
@@ -84,27 +92,33 @@ public class TechnologieController : Controller
             .Select(k => k.Przeznaczenie)
             .Distinct()
             .ToListAsync();
-        return Json(przeznaczenia);
+
+        bool load_other_view = _context.Kategoria
+            .Where(k => k.Opis == opis)
+            .Select(k => k.ToolPolicy == 0)
+            .FirstOrDefault();
+
+        return Json(new { Przeznaczenia = przeznaczenia, LoadOtherView = load_other_view });
     }
 
     [HttpGet]
     public async Task<IActionResult> GetMaterialyWykonania(string opis, string przeznaczenie)
     {
         int index = _context.Kategoria
-                .Where(k => k.Opis == opis)
-                .Select(k => k.IdKategorii)
-                .FirstOrDefault();
+            .Where(k => k.Opis == opis)
+            .Select(k => k.IdKategorii)
+            .FirstOrDefault();
 
         var materialy = await _context.KategoriaDetails
             .Where(k => k.IdKategorii == index && k.Przeznaczenie == przeznaczenie)
             .Select(k => k.MaterialWykonania)
             .Distinct()
             .ToListAsync();
-        return Json(materialy); ;
+        return Json(materialy);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetSrednice(string opis, string przeznaczenie, string ?materialWykonania)
+    public async Task<IActionResult> GetSrednice(string opis, string przeznaczenie, string? materialWykonania)
     {
         var select_category = _context.Kategoria
             .Where(k => k.Opis == opis)
@@ -114,16 +128,9 @@ public class TechnologieController : Controller
         int policy_t = select_category.ToolPolicy;
         int index_for_tool = 0;
 
-
-        /*var kategoria = await _context.KategoriaDetails
-            .FirstOrDefaultAsync(k =>
-                k.IdKategorii == index &&
-                k.Przeznaczenie == przeznaczenie
-                (k.MaterialWykonania == materialWykonania || (materialWykonania == null && k.MaterialWykonania == null)));
-        */
-        var kategoria_przeznaczenie=await _context.KategoriaDetails
+        var kategoria_przeznaczenie = await _context.KategoriaDetails
             .Where(k => k.IdKategorii == index_for_destiny)
-            .Where(k=>k.Przeznaczenie==przeznaczenie)
+            .Where(k => k.Przeznaczenie == przeznaczenie)
             .ToListAsync();
 
         if (policy_t == 0)
@@ -136,12 +143,6 @@ public class TechnologieController : Controller
         }
         else
         {
-            /* var kategoria = await _context.KategoriaDetails
-                 .FirstOrDefaultAsync(k =>
-                 k.IdKategorii == index_for_destiny &&
-                 k.Przeznaczenie == przeznaczenie &&
-                 k.MaterialWykonania == materialWykonania);*/
-
             var kategoria = _context.KategoriaDetails
                 .Where(k => k.IdKategorii == index_for_destiny)
                 .Where(k => k.Przeznaczenie == przeznaczenie)
@@ -150,7 +151,6 @@ public class TechnologieController : Controller
 
             index_for_tool = kategoria.IdKategorii;
         }
-
 
         if (index_for_tool == null)
         {
@@ -166,9 +166,8 @@ public class TechnologieController : Controller
         return Json(srednice);
     }
 
-
     [HttpGet]
-    public async Task<IActionResult> GetIdNarzedzia(string opis, string przeznaczenie, string materialWykonania, double srednica)
+    public async Task<IActionResult> GetIdNarzedzia(string opis, string przeznaczenie, string? materialWykonania, double? srednica)
     {
         int index = _context.Kategoria
             .Where(k => k.Opis == opis)
@@ -196,7 +195,6 @@ public class TechnologieController : Controller
 
         return Json(new { idNarzedzia = narzedzie.IdNarzedzia, nazwa = narzedzie.Nazwa });
     }
-
 
     public async Task<IActionResult> Index()
     {
@@ -232,7 +230,7 @@ public class TechnologieController : Controller
             _context.Zlecenies.Add(noweZlecenie);
             await _context.SaveChangesAsync();
 
-            int created_order = _context.Zlecenies.OrderBy(y=>y.IdZlecenia).Select(x => x.IdZlecenia).LastOrDefault();
+            int created_order = _context.Zlecenies.OrderBy(y => y.IdZlecenia).Select(x => x.IdZlecenia).LastOrDefault();
 
             availableTools.Zlecenie_ID_Magazyn_Tools(_context, created_order);
 
@@ -240,7 +238,7 @@ public class TechnologieController : Controller
         }
         else
         {
-            TempData["ErrorMessage"] = "Nie można utworzyć zlecenia. Brak dostępnych narzędzi.";
+            TempData["ErrorMessage"] = "Nie można utworzyć zlecenia. Brak koniecznych narzędzi.";
             return RedirectToAction(nameof(Index));
         }
     }
@@ -260,4 +258,12 @@ public class TechnologieController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    private async Task SetViewBags()
+    {
+        var kategorie = await _context.Kategoria.ToListAsync();
+        var kategorie_details = await _context.KategoriaDetails.ToListAsync();
+        ViewBag.Opisy = kategorie.Select(k => k.Opis).Distinct().ToList();
+        ViewBag.Przeznaczenia = kategorie_details.Select(k => k.Przeznaczenie).Distinct().ToList();
+        ViewBag.MaterialyWykonania = kategorie_details.Select(k => k.MaterialWykonania).Distinct().ToList();
+    }
 }

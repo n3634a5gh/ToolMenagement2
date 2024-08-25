@@ -4,14 +4,22 @@ namespace Tool_Menagement.Models
 {
     public class TechnologiumViewModel
     {
+        [Display(Name = " Opis Technologii")]
         public string OpisTechnologii { get; set; }
 
+        [Required]
         public string Opis { get; set; }
         public string Przeznaczenie { get; set; }
+
+        [Display(Name = "Materiał Wykonania")]
         public string MaterialWykonania { get; set; }
+
+        [Display(Name = "Średnica")]
         public double Srednica { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "Czas pracy musi być liczbą większą lub równą 0")]
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Czas Pracy")]
+        [Range(0, int.MaxValue, ErrorMessage = "Czas Pracy=INT, value>0")]
         public int CzasPracy { get; set; }
 
         public List<string> Opisy { get; set; }
@@ -30,7 +38,11 @@ namespace Tool_Menagement.Models
         [StringLength(1000, MinimumLength = 5, ErrorMessage = "Opis technologii musi mieć minimum 5 znaków i zaczynać się od dużej litery")]
         [RegularExpression(@"^[A-Z].*", ErrorMessage = "Opis technologii musi zaczynać się od dużej litery")]
         public string Nazwa { get; set; }
-        public int? CzasPracy { get; set; }
+
+        [Required(ErrorMessage = "Pole wymagane")]
+        [Display(Name = "Czas Pracy")]
+        [Range(0, int.MaxValue, ErrorMessage = "Czas Pracy=INT, value>0")]
+        public int CzasPracy { get; set; }
     }
 
 }
