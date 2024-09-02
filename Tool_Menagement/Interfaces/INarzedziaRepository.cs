@@ -7,6 +7,6 @@ namespace Tool_Menagement.Interfaces
     {
         Task<Magazyn?> ZnajdzPozycjeMagazynowaAsync(int pozycjaMagazynowa);
         Task<Kategorium?> ZnajdzKategorieDlaNarzedziaAsync(int idNarzedzia);
-        Task PrzywrocNarzedzieAsync(Magazyn magazyn);
+        Task PrzywrocNarzedzieAsync(Magazyn magazyn, int toolPolicy);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using Tool_Menagement.Models;
 
 namespace Tool_Menagement.Helpers
@@ -113,6 +114,98 @@ namespace Tool_Menagement.Helpers
             }
 
             return closed_orders;
+        }
+
+        public bool CanRegenerate(int pozycjaMagazynowa, ToolsBaseContext _context)
+        {
+            var toolId=_context.Magazyns.Where(n=>n.PozycjaMagazynowa==pozycjaMagazynowa)
+                .FirstOrDefault();
+            var catId=_context.Narzedzies
+                .Where(n=>n.IdNarzedzia==toolId.IdNarzedzia)
+                .FirstOrDefault();
+            var toolPolicy=_context.Kategoria
+                .Where(n=>n.IdKategorii==catId.IdKategorii)
+                .FirstOrDefault();
+
+            if(toolPolicy.ToolPolicy==1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public void Close_order_on_production(List<NarzedzieUszkodzoneViewModel> 
+            uszkodzoneNarzedzia,ToolsBaseContext _context, int order_Id)
+        {
+            //close active order iz Zlecenie
+            var orderToClose = _context.Zlecenies.Where(n => n.IdZlecenia == order_Id).FirstOrDefault();
+            if(orderToClose!=null)
+            {
+                orderToClose.Aktywne = false;
+                _context.Zlecenies.Update(orderToClose);
+                _context.SaveChanges();
+            }
+
+            //close active order in OrderTT
+
+            var positionsToClose = _context.OrderTTs.Where(n => n.OrderId == order_Id);
+            _context.SaveChanges();
+            if(positionsToClose!=null)
+            {
+                foreach(var position in positionsToClose)
+                {
+                    position.Active = false;
+                    _context.OrderTTs.Update(position);
+                }
+                _context.SaveChanges();
+            }
+
+
+            foreach(var tools in uszkodzoneNarzedzia)
+            {
+                var position=_context.Magazyns.Where(n=>n.PozycjaMagazynowa==tools.ToolId)
+                    .FirstOrDefault();
+                if(tools.DamageType== "Regenerowalne")
+                {
+                    if(!Check_policy(tools.ToolId, _context))
+                    {
+                        position.Wycofany = true;
+                        _context.Magazyns.Update(position);
+                    }
+                    else
+                    {
+                        position.Regeneracja = true;
+                        _context.Magazyns.Update(position);
+                    }
+                }
+                else
+                {
+                    position.Wycofany = true;
+                    _context.Magazyns.Update(position);
+                }
+                _context.SaveChanges();
+            }
+        }
+
+        private bool Check_policy(int tool_Id, ToolsBaseContext _context)
+        {
+            var t_Id = _context.Magazyns.Where(n => n.PozycjaMagazynowa == tool_Id)
+                        .FirstOrDefault();
+            var cat_Id = _context.Narzedzies.Where(n => n.IdNarzedzia == t_Id.IdNarzedzia)
+                .FirstOrDefault();
+            var policy = _context.Kategoria.Where(n => n.IdKategorii == cat_Id.IdKategorii)
+                .FirstOrDefault();
+            if (policy.ToolPolicy == 1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

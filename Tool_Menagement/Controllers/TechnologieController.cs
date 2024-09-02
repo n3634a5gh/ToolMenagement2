@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Aspose.BarCode.Generation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tool_Menagement.Helpers;
 using Tool_Menagement.Interfaces;
@@ -211,6 +212,14 @@ public class TechnologieController : Controller
         }
 
         return View(technologieViewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ShowBarcode(string data)
+    {
+        Barcode barcode = new Barcode();
+        var barcodeData = barcode.GenerateBarcode(data);
+        return File(barcodeData, "image/jpeg");
     }
 
     [HttpPost]

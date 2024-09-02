@@ -4,7 +4,7 @@
     ViewData["Title"] = "Rejestracja";
 }
 
-<h1>Create Rejestracja</h1>
+<h1>Rejestracja</h1>
 
 @if (TempData["ErrorMessage"] != null)
 {
@@ -42,6 +42,57 @@
         <input asp-for="Wykonal" class="form-control" />
         <span asp-validation-for="Wykonal" class="text-danger"></span>
     </div>
+
+    <div class="form-group">
+        <input type="checkbox" asp-for="IsToolDamaged" id="toolDamageCheckbox" />
+        <label asp-for="IsToolDamaged">Uszkodzenia narzędzi</label>
+    </div>
+
+    <div id="toolDamageDetails" style="display: none;">
+        <div class="form-group">
+            <label asp-for="ToolId" class="control-label"></label>
+            <input asp-for="ToolId" class="form-control" />
+            <span asp-validation-for="ToolId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="DamageType" class="control-label"></label>
+            <div>
+                <input type="radio" asp-for="DamageType" value="Regenerowalne" /> Regenerowalne
+                <input type="radio" asp-for="DamageType" value="Trwałe" /> Trwałe
+            </div>
+            <span asp-validation-for="DamageType" class="text-danger"></span>
+        </div>
+
+        <button type="button" id="DodajNarzedzie" class="btn btn-secondary">Dodaj Narzędzie</button>
+    </div>
+
+    <div class="form-group">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Id Narzędzia</td>
+                    <td>Typ uszkodzenia</td>
+                </tr>
+            </thead>
+            <tbody id="ListaNarzedzi">
+                @foreach (var item in Model.Narzedzia)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" name="Narzedzia[@Model.Narzedzia.IndexOf(item)].ToolId" value="@item.ToolId" />
+                            @item.ToolId
+                        </td>
+                        <td>
+                            <input type="hidden" name="Narzedzia[@Model.Narzedzia.IndexOf(item)].DamageType" value="@item.DamageType" />
+                            @item.DamageType
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Zapisz</button>
     </div>
@@ -49,4 +100,117 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function toggleToolDamageDetails() {
+                var checkbox = document.getElementById('toolDamageCheckbox');
+                var details = document.getElementById('toolDamageDetails');
+                var toolListContainer = document.getElementById('ListaNarzedzi');
+
+                if (checkbox.checked) {
+                    details.style.display = 'block';
+                    if (toolListContainer) {
+                        toolListContainer.style.display = 'block';
+                    }
+                } else {
+                    details.style.display = 'none';
+                    clearToolList();
+                    if (toolListContainer) {
+                        toolListContainer.style.display = 'none';
+                    }
+                }
+            }
+
+            function clearToolList() {
+                var toolListContainer = document.getElementById('ListaNarzedzi');
+                if (toolListContainer) {
+                    toolListContainer.innerHTML = ''; // Usunięcie zawartości listy narzędzi
+                }
+            }
+
+            $('#DodajNarzedzie').click(function () {
+                var toolId = $('#ToolId').val();
+                var damageType = $('input[name="DamageType"]:checked').val();
+                var idZlecenia = $('#IdZlecenia').val();
+
+                if (toolId && damageType) {
+                    // Sprawdzenie, czy narzędzie istnieje
+                    $.ajax({
+                        url: '/Rejestracja/CheckToolExists',
+                        type: 'GET',
+                        data: {
+                            toolId: toolId,
+                            idZlecenia: idZlecenia
+                        },
+                        success: function (data) {
+                            if (data.exists) {
+                                // Jeśli typ uszkodzenia to "Regeneracja", sprawdź, czy narzędzie może być regenerowane
+                                if (damageType === 'Regeneracja') {
+                                    $.ajax({
+                                        url: '/Rejestracja/CanRegenerateTool',
+                                        type: 'GET',
+                                        data: {
+                                            toolId: toolId
+                                        },
+                                        success: function (data) {
+                                            if (!data.canRegenerate) {
+                                                alert('To narzędzie nie może być regenerowane.');
+                                            } else {
+                                                addToolToList(toolId, damageType);
+                                            }
+                                        },
+                                        error: function () {
+                                            alert('Wystąpił błąd podczas sprawdzania możliwości regeneracji narzędzia.');
+                                        }
+                                    });
+                                } else {
+                                    addToolToList(toolId, damageType);
+                                }
+                            } else {
+                                alert('Narzędzie o podanym ID nie istnieje w tym zleceniu.');
+                            }
+                        },
+                        error: function () {
+                            alert('Wystąpił błąd podczas sprawdzania istnienia narzędzia.');
+                        }
+                    });
+                } else {
+                    alert('Proszę wypełnić wszystkie pola.');
+                }
+            });
+
+            function addToolToList(toolId, damageType) {
+                var istnieje = false;
+
+                $('#ListaNarzedzi tr').each(function () {
+                    var currentToolId = $(this).find('input[name*="ToolId"]').val();
+                    if (currentToolId == toolId) {
+                        alert('To narzędzie już istnieje na liście.');
+                        istnieje = true;
+                    }
+                });
+
+                if (!istnieje) {
+                    $('#ListaNarzedzi').append('<tr><td><input type="hidden" name="Narzedzia[' + ($('#ListaNarzedzi tr').length) + '].ToolId" value="' + toolId + '" />' + toolId + '</td><td><input type="hidden" name="Narzedzia[' + ($('#ListaNarzedzi tr').length) + '].DamageType" value="' + damageType + '" />' + damageType + '</td></tr>');
+                    $('#ToolId').val('');
+                    $('input[name="DamageType"]').prop('checked', false);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                toggleToolDamageDetails();
+            });
+
+            $('#toolDamageCheckbox').change(function () {
+                toggleToolDamageDetails();
+            });
+        });
+
+    </script>
 }
+
+
+
+
+

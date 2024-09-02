@@ -1,31 +1,18 @@
-﻿using System;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using BarcodeStandard;
-using SkiaSharp;
-using Type = BarcodeStandard.Type;
-
+﻿using Aspose.BarCode.Generation;
+using Microsoft.VisualBasic;
 namespace Tool_Menagement.Helpers
 {
     public class Barcode
     {
-        /*private static SKBitmap GetBarCode(Barcode b, string codeNumber, Type type, int length = 1000, int height = 200, int fontSize = 40)
+        public byte[] GenerateBarcode(string data)
         {
-            try
+            BarcodeGenerator generator = new BarcodeGenerator(EncodeTypes.Code128, data);
+            using (MemoryStream stream = new MemoryStream())
             {
-                b.IncludeLabel = false;
-                b.Alignment = AlignmentPositions.Center;
-                b.LabelFont = new SKFont(SKTypeface.Default, fontSize);
+                generator.Save(stream, BarCodeImageFormat.Jpeg);
+                return stream.ToArray();
+            }
+        }
 
-                var barcodeImage = b.Encode(type, codeNumber, SKColors.Black, SKColors.White, length, height);
-                return SKBitmap.FromImage(barcodeImage);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }*/
     }
 }

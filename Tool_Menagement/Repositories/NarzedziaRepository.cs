@@ -28,8 +28,13 @@ namespace Tool_Menagement.Repositories
             return narzedzie?.IdKategoriiNavigation;
         }
 
-        public async Task PrzywrocNarzedzieAsync(Magazyn magazyn)
+        public async Task PrzywrocNarzedzieAsync(Magazyn magazyn, int toolPolicy)
         {
+            if (toolPolicy == 2)
+            {
+                magazyn.Trwalosc = (int)(magazyn.Trwalosc * 0.8);
+            }
+
             magazyn.Uzycie = 0;
             magazyn.CyklRegeneracji += 1;
             magazyn.Regeneracja = false;

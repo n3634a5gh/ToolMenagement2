@@ -52,6 +52,13 @@
                             Zakończ
                         </button>
                     </form>
+
+                    @if (technologiaViewModel.AktywneZlecenie != null)
+                    {
+                        <button type="button" class="btn btn-secondary print-barcode-btn" data-id="@technologiaViewModel.AktywneZlecenie.IdZlecenia">
+                            <i class="fas fa-print"></i> Drukuj
+                        </button>
+                    }
                 </td>
             </tr>
             <tr class="details" data-id="@technologiaViewModel.Technologia.IdTechnologi" style="display: none;">
@@ -97,9 +104,16 @@
                     form.submit();
                 }
             });
+
+            $('.print-barcode-btn').click(function () {
+                var zlecenieId = $(this).data('id');
+                var url = '@Url.Action("ShowBarcode", "Technologie")' + '?data=' + zlecenieId;
+                window.open(url, '_blank');
+            });
         });
     </script>
 }
+
 
 <style>
     .table-striped tbody tr:nth-of-type(odd) {

@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "Tool_Menagement/1.0.0": {
         "dependencies": {
-          "BarcodeLib": "3.1.4",
+          "Aspose.BarCode": "24.8.0",
           "FluentValidation": "11.9.2",
           "FluentValidation.AspNetCore": "11.3.0",
           "Microsoft.AspNetCore.Components": "8.0.7",
@@ -22,6 +22,26 @@
         },
         "runtime": {
           "Tool_Menagement.dll": {}
+        }
+      },
+      "Aspose.BarCode/24.8.0": {
+        "dependencies": {
+          "Aspose.Drawing.Common": "24.6.0",
+          "System.Text.Encoding.CodePages": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/Aspose.BarCode.dll": {
+            "assemblyVersion": "24.8.0.0",
+            "fileVersion": "24.8.0.0"
+          }
+        }
+      },
+      "Aspose.Drawing.Common/24.6.0": {
+        "runtime": {
+          "lib/netstandard2.0/Aspose.Drawing.Common.dll": {
+            "assemblyVersion": "24.6.0.0",
+            "fileVersion": "24.6.0.0"
+          }
         }
       },
       "Azure.Core/1.35.0": {
@@ -55,20 +75,6 @@
           "lib/netstandard2.0/Azure.Identity.dll": {
             "assemblyVersion": "1.10.3.0",
             "fileVersion": "1.1000.323.51804"
-          }
-        }
-      },
-      "BarcodeLib/3.1.4": {
-        "dependencies": {
-          "SkiaSharp": "2.88.8",
-          "SkiaSharp.NativeAssets.Linux.NoDependencies": "2.88.8",
-          "System.Resources.Extensions": "8.0.0",
-          "System.Text.Json": "8.0.4"
-        },
-        "runtime": {
-          "lib/netstandard2.0/BarcodeStandard.dll": {
-            "assemblyVersion": "3.1.4.0",
-            "fileVersion": "3.1.4.0"
           }
         }
       },
@@ -239,7 +245,7 @@
           "System.Collections.Immutable": "6.0.0",
           "System.Reflection.Metadata": "6.0.1",
           "System.Runtime.CompilerServices.Unsafe": "6.0.0",
-          "System.Text.Encoding.CodePages": "6.0.0"
+          "System.Text.Encoding.CodePages": "8.0.0"
         },
         "runtime": {
           "lib/netcoreapp3.1/Microsoft.CodeAnalysis.dll": {
@@ -467,7 +473,7 @@
           "System.Runtime.Caching": "6.0.0",
           "System.Security.Cryptography.Cng": "5.0.0",
           "System.Security.Principal.Windows": "5.0.0",
-          "System.Text.Encoding.CodePages": "6.0.0",
+          "System.Text.Encoding.CodePages": "8.0.0",
           "System.Text.Encodings.Web": "8.0.0"
         },
         "runtime": {
@@ -873,73 +879,6 @@
           }
         }
       },
-      "SkiaSharp/2.88.8": {
-        "dependencies": {
-          "SkiaSharp.NativeAssets.Win32": "2.88.8",
-          "SkiaSharp.NativeAssets.macOS": "2.88.8"
-        },
-        "runtime": {
-          "lib/net6.0/SkiaSharp.dll": {
-            "assemblyVersion": "2.88.0.0",
-            "fileVersion": "2.88.8.0"
-          }
-        }
-      },
-      "SkiaSharp.NativeAssets.Linux.NoDependencies/2.88.8": {
-        "dependencies": {
-          "SkiaSharp": "2.88.8"
-        },
-        "runtimeTargets": {
-          "runtimes/linux-arm/native/libSkiaSharp.so": {
-            "rid": "linux-arm",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-arm64/native/libSkiaSharp.so": {
-            "rid": "linux-arm64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-musl-x64/native/libSkiaSharp.so": {
-            "rid": "linux-musl-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/linux-x64/native/libSkiaSharp.so": {
-            "rid": "linux-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          }
-        }
-      },
-      "SkiaSharp.NativeAssets.macOS/2.88.8": {
-        "runtimeTargets": {
-          "runtimes/osx/native/libSkiaSharp.dylib": {
-            "rid": "osx",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          }
-        }
-      },
-      "SkiaSharp.NativeAssets.Win32/2.88.8": {
-        "runtimeTargets": {
-          "runtimes/win-arm64/native/libSkiaSharp.dll": {
-            "rid": "win-arm64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/win-x64/native/libSkiaSharp.dll": {
-            "rid": "win-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/win-x86/native/libSkiaSharp.dll": {
-            "rid": "win-x86",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          }
-        }
-      },
       "System.CodeDom/4.4.0": {
         "runtime": {
           "lib/netstandard2.0/System.CodeDom.dll": {
@@ -1094,14 +1033,6 @@
           "System.Collections.Immutable": "6.0.0"
         }
       },
-      "System.Resources.Extensions/8.0.0": {
-        "runtime": {
-          "lib/net8.0/System.Resources.Extensions.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.23.53103"
-          }
-        }
-      },
       "System.Runtime/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0",
@@ -1170,11 +1101,7 @@
           "System.Runtime": "4.3.0"
         }
       },
-      "System.Text.Encoding.CodePages/6.0.0": {
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
+      "System.Text.Encoding.CodePages/8.0.0": {},
       "System.Text.Encodings.Web/8.0.0": {},
       "System.Text.Json/8.0.4": {
         "dependencies": {
@@ -1216,6 +1143,20 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Aspose.BarCode/24.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tZc3uK8uXN1GFGOCiCF/k9/BB5bV/gaZ5wlbc18BZFj12qPNCC1AWBJ1fdGXE0p/RNUqEy80i4dK1mcugTEq0A==",
+      "path": "aspose.barcode/24.8.0",
+      "hashPath": "aspose.barcode.24.8.0.nupkg.sha512"
+    },
+    "Aspose.Drawing.Common/24.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9ZRHbP/Fx7dskure0wPKzppeRZNq1QmGKVfV3s48LeHixD9886FSLvaFH5mh+31UpC5eP/tCQMDpROJOOG10Ew==",
+      "path": "aspose.drawing.common/24.6.0",
+      "hashPath": "aspose.drawing.common.24.6.0.nupkg.sha512"
+    },
     "Azure.Core/1.35.0": {
       "type": "package",
       "serviceable": true,
@@ -1229,13 +1170,6 @@
       "sha512": "sha512-l1Xm2MWOF2Mzcwuarlw8kWQXLZk3UeB55aQXVyjj23aBfDwOZ3gu5GP2kJ6KlmZeZv2TCzw7x4L3V36iNr3gww==",
       "path": "azure.identity/1.10.3",
       "hashPath": "azure.identity.1.10.3.nupkg.sha512"
-    },
-    "BarcodeLib/3.1.4": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-S45/MlvoXh7SMDCaM0BemUywSmixO3jJxCHfZJzLrCn/Faugnf5PaCpVmskzSyLBMyWJRcP3X26/p/QSYxawEg==",
-      "path": "barcodelib/3.1.4",
-      "hashPath": "barcodelib.3.1.4.nupkg.sha512"
     },
     "FluentValidation/11.9.2": {
       "type": "package",
@@ -1671,34 +1605,6 @@
       "path": "mudblazor/7.1.1",
       "hashPath": "mudblazor.7.1.1.nupkg.sha512"
     },
-    "SkiaSharp/2.88.8": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-bRkp3uKp5ZI8gXYQT57uKwil1uobb2p8c69n7v5evlB/2JNcMAXVcw9DZAP5Ig3WSvgzGm2YSn27UVeOi05NlA==",
-      "path": "skiasharp/2.88.8",
-      "hashPath": "skiasharp.2.88.8.nupkg.sha512"
-    },
-    "SkiaSharp.NativeAssets.Linux.NoDependencies/2.88.8": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/DoKtdyvRgCC5GR/SH+ps3ZiOjmf0BYpAyrhWQELFOO1hdcqddrDVJjDNCOJ41vV+NlS5b3kcDoZZ7jLhFjyXg==",
-      "path": "skiasharp.nativeassets.linux.nodependencies/2.88.8",
-      "hashPath": "skiasharp.nativeassets.linux.nodependencies.2.88.8.nupkg.sha512"
-    },
-    "SkiaSharp.NativeAssets.macOS/2.88.8": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-6Kn5TSkKlfyS6azWHF3Jk2sW5C4jCE5uSshM/5AbfFrR+5n6qM5XEnz9h4VaVl7LTxBvHvMkuPb/3bpbq0vxTw==",
-      "path": "skiasharp.nativeassets.macos/2.88.8",
-      "hashPath": "skiasharp.nativeassets.macos.2.88.8.nupkg.sha512"
-    },
-    "SkiaSharp.NativeAssets.Win32/2.88.8": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-O9QXoWEXA+6cweR4h3BOnwMz+pO9vL9mXdjLrpDd0w1QzCgWmLQBxa1VgySDITiH7nQndrDG1h6937zm9pLj1Q==",
-      "path": "skiasharp.nativeassets.win32/2.88.8",
-      "hashPath": "skiasharp.nativeassets.win32.2.88.8.nupkg.sha512"
-    },
     "System.CodeDom/4.4.0": {
       "type": "package",
       "serviceable": true,
@@ -1832,13 +1738,6 @@
       "path": "system.reflection.metadata/6.0.1",
       "hashPath": "system.reflection.metadata.6.0.1.nupkg.sha512"
     },
-    "System.Resources.Extensions/8.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-psnQ6GRQOvt+evda5C4nD5EuV49mz2Tv0DD2JDVDEbE/TKoMukxSkGJcsBJ0pajpPuFRr67syFYlkJ4Wj6A5Zw==",
-      "path": "system.resources.extensions/8.0.0",
-      "hashPath": "system.resources.extensions.8.0.0.nupkg.sha512"
-    },
     "System.Runtime/4.3.0": {
       "type": "package",
       "serviceable": true,
@@ -1902,12 +1801,12 @@
       "path": "system.text.encoding/4.3.0",
       "hashPath": "system.text.encoding.4.3.0.nupkg.sha512"
     },
-    "System.Text.Encoding.CodePages/6.0.0": {
+    "System.Text.Encoding.CodePages/8.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
-      "path": "system.text.encoding.codepages/6.0.0",
-      "hashPath": "system.text.encoding.codepages.6.0.0.nupkg.sha512"
+      "sha512": "sha512-OZIsVplFGaVY90G2SbpgU7EnCoOO5pw1t4ic21dBF3/1omrJFpAGoNAVpPyMVOC90/hvgkGG3VFqR13YgZMQfg==",
+      "path": "system.text.encoding.codepages/8.0.0",
+      "hashPath": "system.text.encoding.codepages.8.0.0.nupkg.sha512"
     },
     "System.Text.Encodings.Web/8.0.0": {
       "type": "package",

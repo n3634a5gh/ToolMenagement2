@@ -27,20 +27,43 @@ public class PrzywracanieNarzedziaController : Controller
 
             if (magazyn == null)
             {
-                TempData["ErrorMessage"] = "Takie narzędzie nie istnieje.";
+                TempData["ErrorMessage"] = "Narzędzie o podanym numerze nie istnieje.";
+                return RedirectToAction(nameof(Przywracanie));
+            }
+
+            if (magazyn.Wycofany)
+            {
+                TempData["ErrorMessage"] = "Narzędzie jest wycofane z użycia.";
+                return RedirectToAction(nameof(Przywracanie));
+            }
+            if (magazyn.Regeneracja==false)
+            {
+                TempData["ErrorMessage"] = "Nie można przywrócić sprawnego narzędzia.";
                 return RedirectToAction(nameof(Przywracanie));
             }
 
             var kategoria = await _narzedziaRepository.ZnajdzKategorieDlaNarzedziaAsync(magazyn.IdNarzedzia);
 
-            if (kategoria != null && kategoria.ToolPolicy == 3)
+            if (kategoria != null)
             {
-                await _narzedziaRepository.PrzywrocNarzedzieAsync(magazyn);
-                TempData["SuccessMessage"] = "Narzędzie zostało pomyślnie przywrócone.";
+                if (kategoria.ToolPolicy == 3)
+                {
+                    await _narzedziaRepository.PrzywrocNarzedzieAsync(magazyn, kategoria.ToolPolicy);
+                    TempData["SuccessMessage"] = "Narzędzie zostało przywrócone.";
+                }
+                else if (kategoria.ToolPolicy == 2)
+                {
+                    await _narzedziaRepository.PrzywrocNarzedzieAsync(magazyn, kategoria.ToolPolicy);
+                    TempData["SuccessMessage"] = "Narzędzie zostało przywrócone z ograniczeniem trwałości.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Błąd danych SQL.";
+                }
             }
             else
             {
-                TempData["ErrorMessage"] = "Narzędzie nie może zostać przywrócone.";
+
             }
 
             return RedirectToAction(nameof(Przywracanie));

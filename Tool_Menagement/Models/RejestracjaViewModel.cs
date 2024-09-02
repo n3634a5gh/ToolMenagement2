@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tool_Menagement.Models
 {
@@ -16,5 +17,22 @@ namespace Tool_Menagement.Models
         [MinLength(5, ErrorMessage = "Pole o długości co najmniej 5 znaków.")]
         [Display(Name = "Użytkownik")]
         public string? Wykonal { get; set; }
+
+        [Display(Name = "Uszkodzenia narzędzi")]
+        public bool IsToolDamaged { get; set; }
+
+        [Display(Name = "Id Narzędzia")]
+        public int? ToolId { get; set; }
+
+        [Display(Name = "Typ uszkodzenia")]
+        public string? DamageType { get; set; }
+
+        public List<NarzedzieUszkodzoneViewModel> Narzedzia { get; set; } = new List<NarzedzieUszkodzoneViewModel>();
+    }
+
+    public class NarzedzieUszkodzoneViewModel
+    {
+        public int ToolId { get; set; }
+        public string DamageType { get; set; }
     }
 }

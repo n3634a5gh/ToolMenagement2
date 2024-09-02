@@ -19,13 +19,27 @@ namespace Tool_Menagement.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var model = new RejestracjaViewModel
+            {
+                Narzedzia = new List<NarzedzieUszkodzoneViewModel>()
+            };
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(RejestracjaViewModel model)
         {
+            if (model.Narzedzia == null)
+            {
+                model.Narzedzia = new List<NarzedzieUszkodzoneViewModel>();
+            }
+
+            if (!model.IsToolDamaged)
+            {
+                model.Narzedzia.Clear();
+            }
+
             if (ModelState.IsValid)
             {
                 if (_repository.IsOrderValid(model.IdZlecenia))
@@ -52,20 +66,20 @@ namespace Tool_Menagement.Controllers
                                 .Where(x => x.PozycjaMagazynowa == item.ToolId)
                                 .FirstOrDefault();
 
-                            int technologyid=_context.Zlecenies
-                                .Where(x=>x.IdZlecenia==model.IdZlecenia)
-                                .Select(x=>x.IdTechnologi)
+                            int technologyid = _context.Zlecenies
+                                .Where(x => x.IdZlecenia == model.IdZlecenia)
+                                .Select(x => x.IdTechnologi)
                                 .FirstOrDefault();
 
-                            var secected_tool=_context.NarzedziaTechnologia
-                                .Where(x=>x.IdTechnologi==technologyid)
-                                .Where (x=>x.IdNarzedzia==seleced_tool_position.IdNarzedzia)
+                            var secected_tool = _context.NarzedziaTechnologia
+                                .Where(x => x.IdTechnologi == technologyid)
+                                .Where(x => x.IdNarzedzia == seleced_tool_position.IdNarzedzia)
                                 .FirstOrDefault();
 
-                            seleced_tool_position.Uzycie = seleced_tool_position.Uzycie+(int)(secected_tool.CzasPracy * model.Sztuk);
+                            seleced_tool_position.Uzycie = seleced_tool_position.Uzycie + (int)(secected_tool.CzasPracy * model.Sztuk);
                             _context.Magazyns.Update(seleced_tool_position);
                             _context.SaveChanges();
-                         }
+                        }
                     }
                     ToolCheck newcheck = new ToolCheck();
                     List<int> updatedPositions = newcheck.UpdateToolStatus(_context, model.IdZlecenia);
@@ -76,11 +90,17 @@ namespace Tool_Menagement.Controllers
 
                     int count_closed_orders = newcheck.CloseSharedToolsOrders(updatedPositions, _context);
 
-                    if(count_closed_orders>1)
+                    if (count_closed_orders > 1)
                     {
-                        TempData["WarningMessage"] = "Zakończonych zleceń:" + count_closed_orders+". Przekroczony czas użycia narzędzia.";
+                        TempData["WarningMessage"] = "Zakończonych zleceń:" + count_closed_orders + ". Przekroczony czas użycia narzędzia.";
                     }
 
+                    if (model.IsToolDamaged)
+                    {
+                        var checkTool = new ToolCheck();
+                        checkTool.Close_order_on_production(model.Narzedzia, _context, model.IdZlecenia);
+                        TempData["ErrorMessage"] = "Zlecenie zakończono.";
+                    }
 
                     TempData["SuccessMessage"] = "Rejestracja zapisana pomyślnie.";
                     return RedirectToAction("Create");
@@ -92,5 +112,86 @@ namespace Tool_Menagement.Controllers
             }
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult CheckToolExists(int toolId, int idZlecenia)
+        {
+            var toolExists = _context.OrderTTs
+                .Where(n => n.Active == true)
+                .Where(n => n.OrderId == idZlecenia)
+                .Any(n => n.ToolId == toolId);
+
+            return Json(new { exists = toolExists });
+        }
+
+        [HttpGet]
+        public IActionResult CanRegenerateTool(int toolId)
+        {
+            ToolCheck toolCheck = new ToolCheck();
+            bool canRegenerate = toolCheck.CanRegenerate(toolId, _context);
+            return Json(new { canRegenerate = canRegenerate });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddTool(RejestracjaViewModel model)
+        {
+            if (model.Narzedzia == null)
+            {
+                model.Narzedzia = new List<NarzedzieUszkodzoneViewModel>();
+            }
+
+            if (!model.IsToolDamaged)
+            {
+                model.Narzedzia.Clear();
+            }
+            else if (model.ToolId.HasValue && !string.IsNullOrEmpty(model.DamageType))
+            {
+                var open_orders_TT = _context.OrderTTs
+                    .Where(n => n.Active == true)
+                    .Where(n => n.OrderId == model.IdZlecenia)
+                    .ToArray();
+
+                var toolExists = open_orders_TT.Any(n => n.ToolId == model.ToolId);
+                var check_regeneration = new ToolCheck();
+
+                if (toolExists)
+                {
+                    if(check_regeneration.CanRegenerate(model.ToolId.Value,_context))
+                    {
+                        model.Narzedzia.Add(new NarzedzieUszkodzoneViewModel
+                        {
+                            ToolId = model.ToolId.Value,
+                            DamageType = model.DamageType
+                        });
+
+                        TempData["SuccessMessage"] = "Narzędzie zostało dodane do listy.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Narzędzie nie podlega regeneracji.";
+                    }
+                    
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Nie znaleziono narzędzia o podanym Id w aktywnych zleceniach.";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Id Narzędzia i Typ uszkodzenia są wymagane.";
+            }
+
+            if (model.IsToolDamaged)
+            {
+                var checkTool=new ToolCheck();
+                checkTool.Close_order_on_production(model.Narzedzia, _context, model.IdZlecenia);
+                TempData["ErrorMessage"] = "Zlecenie zakończono.";
+            }
+
+                return View("Create", model);
+        }
+
     }
 }
