@@ -193,5 +193,13 @@ namespace Tool_Menagement.Controllers
                 return View("Create", model);
         }
 
+        [HttpGet]
+        public IActionResult Index()
+        {
+            var rejestracje = _context.Rejestracjas.ToList();
+            return View(rejestracje);
+        }
+
+
     }
 }
